@@ -104,8 +104,18 @@ vcs -sverilog full_adder.v full_adder_tb.sv -full64 -lca -kdb -debug_access+all
 
 ```
 
+-sverilog switch
+-full64  64bit Architecture
+-lca     internal switches to vcs
+-kdb     kernel debugger
+-debug_access+all  debug all the execution process
+
+
+
 <img width="959" alt="1" src="https://github.com/user-attachments/assets/18c5974a-182a-483e-a0eb-93bdfd004d0d" />
 
+
+To run the design
 
 ```
 ./simv
@@ -131,11 +141,41 @@ Veridi - Waveform debug
 
 
 # Verification
-   1. Coverage Analysis - Code Coverage
+   1. Coverage Analysis 
    2. System Verilog Methodology
- 
-     
 
+1. Coverage Analysis - The generic term for measuring progress in completing design verification
+
+   Code coverage – how much of the HDL code has been exercised
+
+   Functional coverage – how well the design's intended behaviour has been tested
+
+   Assertion coverage – how many assertions have been triggered or checked
+
+Code Coverage
+
+1. Coverpoint - the number of specific points we check or monitor in the testbench or stimulus.
+2. Covergroups – collections of coverpoints grouped to track and measure coverage in one place.
+3. Bins – specific stimulus cases or input scenarios defined to track how often they occur during simulation.
+4. Ignore bins – specific coverage points that are intentionally excluded from coverage tracking by marking them as ignore bins.
+5. Cross coverage – defined between coverpoints or variables to measure combinations of their values during simulation.
+
+```
+vcs -sverilog full_adder.v full_adder_tb.sv -full64 -lca -kdb -debug_access+all -cmline+fsm+tgl+cond
+
+```
+
+```
+./simv
+```
+
+```
+Verdi -cov -covdir simv.vdb
+```
+
+2. SV Methodology
+
+	
 # Linting
 
 # Logic Synthesis

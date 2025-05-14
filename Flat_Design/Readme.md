@@ -415,9 +415,38 @@ set PDK_PATH /data/pdk/pdk32nm/SAED32_EDK/
 #Sets the variable RTL_SOURCE_FILES to point to your RTL design
 set RTL_SOURCE_FILES ./../rtl/eight_bit_adder.v
 
+echo $link_library
+echo $target_library
+echo $symbol_library
+echo $synthetic_library
+echo $search_path
+
+```
+
+<img width="958" alt="1" src="https://github.com/user-attachments/assets/90004d32-1d17-4430-b4a7-ff84405420d9" />
+
+```
 #Sources the setup script (initializes variables, libraries, and paths)
 source -echo -verbose ./rm_setup/dc_setup.tcl
 
+echo $link_library
+echo $target_library
+echo $symbol_library
+echo $synthetic_library
+echo $search_path
+
+```
+
+<img width="950" alt="2" src="https://github.com/user-attachments/assets/de78170c-7a42-4201-8b09-4dae5bbf1337" />
+
+```
+get_libs
+
+```
+
+<img width="952" alt="3 1" src="https://github.com/user-attachments/assets/5c8c8339-7689-4302-af70-d065a4399a85" />
+
+```
 #Defines a design library (WORK) to store intermediate synthesis results
 define_design_lib WORK -path ./WORK
 
@@ -427,8 +456,23 @@ set_app_var hdlin_enable_hier_map true
 #Parses the RTL code to check for syntax errors
 analyze -format verilog ${RTL_SOURCE_FILES}
 
+```
+
+<img width="722" alt="3" src="https://github.com/user-attachments/assets/a327feca-1320-4818-bd59-81773db9488d" />
+
+```
+
 #Elaborates the design, resolving the HDL structure into a design database
 elaborate ${DESIGN_NAME}
+```
+
+<img width="607" alt="4" src="https://github.com/user-attachments/assets/7a8a24e0-cc95-4df0-a998-c1e26ec79d67" />
+
+<img width="958" alt="5" src="https://github.com/user-attachments/assets/a893daeb-2253-471b-891d-5ff99960c0d5" />
+
+<img width="349" alt="6" src="https://github.com/user-attachments/assets/c8e29f87-3040-4bb3-92fe-614f57412af2" />
+
+```
 
 #Sets the current working design to the top-level module
 current_design
@@ -467,6 +511,8 @@ write -format verilog -hierarchy -output ${RESULTS_DIR}/${DCRM_FINAL_VERILOG_OUT
 
 write_sdc ./${RESULTS_DIR}/${DCRM_FINAL_SDC_OUTPUT_FILE}
 ```
+
+
 
     Optimizations
     Outputs

@@ -325,14 +325,17 @@ Steps:
 4. Run the goal
 5. Analyse the results
     
-
+```
 read_file -type verilog full_adder.v
 current_goal Design_Read -alltop
 link_design -force
+```
 
 <img width="959" alt="5" src="https://github.com/user-attachments/assets/49513bce-d73d-417b-81fc-2addbca290a9" />
 
+```
  run_goal
+```
 
  <img width="959" alt="7" src="https://github.com/user-attachments/assets/98b7d293-138d-4895-a7fb-667a3d5ed8ba" />
 
@@ -376,6 +379,20 @@ Constraints
  1. Design Rule
  2. Optimizations
 
+```
+create_clock -period 1 [get_ports Clock]
+
+set_input_delay -max 0.5 -clock Clock [all_inputs]
+set_input_transition 0.5 [all_inputs]
+set_output_delay -max 0.5 -clock Clock [all_outputs]
+
+set_clock_uncertainty -setup 0.300 [get_clocks Clock]
+set_clock_uncertainty -hold 0.100 [get_clocks Clock]
+
+set_max_transition 0.2 [current_design]
+set_max_transition -clock_path 0.1 [get_clocks Clock]
+
+```
 Scripts
 
 rm_setup - common_setup.tcl

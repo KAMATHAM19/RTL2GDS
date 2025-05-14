@@ -160,6 +160,8 @@ Code Coverage
 4. Ignore bins – specific coverage points that are intentionally excluded from coverage tracking by marking them as ignore bins.
 5. Cross coverage – defined between coverpoints or variables to measure combinations of their values during simulation.
 
+
+1st sample covering all possible combinations
 ```
 /*four_bit_full_Adder_module full_adder (A,B,C_in,Clock,SUM,C_out)*/
 module full_adder (
@@ -237,6 +239,7 @@ Verdi -cov -covdir simv.vdb
 
 <img width="959" alt="3" src="https://github.com/user-attachments/assets/f1bf87b3-12c9-409b-979d-5ddcdb368238" />
 
+2nd sample covering 3 possible combinations
 ```
 /*four_bit_full_Adder_module full_adder (A,B,C_in,Clock,SUM,C_out)*/
 module full_adder (
@@ -315,12 +318,12 @@ spyglass
 
 <img width="336" alt="6" src="https://github.com/user-attachments/assets/1d150771-8c4e-4d98-b21c-7404919d87e5" />
 
-steps -
- 1. Add rtl files
- 2. Read Design
- 3. Goal setup
- 4. run goal
- 5. Analyse results
+Steps:
+1. Add RTL files
+2. Read the design
+3. Set up the goal
+4. Run the goal
+5. Analyse the results
     
 
 read_file -type verilog full_adder.v
@@ -373,11 +376,98 @@ Constraints
  1. Design Rule
  2. Optimizations
 
+Scripts
 
-    
+rm_setup - common_setup.tcl
 
-    Script
-    
+```
+
+
+set DESIGN_NAME                   "eight_bit_full_adder"  ;#  The name of the top-level design
+
+set PDK_PATH                        "/data/pdk/pdk32nm/SAED32_EDK/"
+
+set ADDITIONAL_SEARCH_PATH        "$PDK_PATH $PDK_PATH/tech/milkyway $PDK_PATH/tech/star_rcxt"
+
+set TARGET_LIBRARY_FILES          "$PDK_PATH/lib/stdcell_rvt/db_ccs/saed32rvt_tt0p78vn40c.db"
+
+
+set TECH_FILE                     "$PDK_PATH/tech/milkyway/saed32nm_1p9m_mw.tf"  ;
+
+set MAP_FILE                      "saed32nm_tf_itf_tluplus.map"  ;#  Mapping file for TLUplus
+set TLUPLUS_MAX_FILE              "saed32nm_1p9m_Cmax.tluplus"  ;#  Max TLUplus file
+set TLUPLUS_MIN_FILE              "saed32nm_1p9m_Cmin.tluplus"  ;#  Min TLUplus file
+
+set MIN_ROUTING_LAYER            "M1"   ;# Min routing layer
+set MAX_ROUTING_LAYER            "M5"   ;# Max routing layer
+```
+rm_setup - dc_setup.tcl
+```
+source -echo -verbose ./rm_setup/common_setup.tcl
+source -echo -verbose ./rm_setup/dc_setup_filenames.tcl
+```
+run script
+
+```
+#Sets the path to the technology library (32nm SAED)
+set PDK_PATH /data/pdk/pdk32nm/SAED32_EDK/
+
+#Sets the variable RTL_SOURCE_FILES to point to your RTL design
+set RTL_SOURCE_FILES ./../rtl/eight_bit_adder.v
+
+#Sources the setup script (initializes variables, libraries, and paths)
+source -echo -verbose ./rm_setup/dc_setup.tcl
+
+#Defines a design library (WORK) to store intermediate synthesis results
+define_design_lib WORK -path ./WORK
+
+#Allows hierarchical design mapping, useful for handling complex designs
+set_app_var hdlin_enable_hier_map true
+
+#Parses the RTL code to check for syntax errors
+analyze -format verilog ${RTL_SOURCE_FILES}
+
+#Elaborates the design, resolving the HDL structure into a design database
+elaborate ${DESIGN_NAME}
+
+#Sets the current working design to the top-level module
+current_design
+
+#Sets the top-level design for verification
+set_verification_top
+
+# Don't use cells in the design
+set_dont_use [get_lib_cells */FADD*]
+set_dont_use [get_lib_cells */HADD*]
+set_dont_use [get_lib_cells */MUX*]
+set_dont_use [get_lib_cells */AO*]
+set_dont_use [get_lib_cells */OA*]
+set_dont_use [get_lib_cells */NAND*]
+set_dont_use [get_lib_cells */XOR*]
+set_dont_use [get_lib_cells */NOR*]
+set_dont_use [get_lib_cells */XNOR*]
+
+#Loads timing constraints from a Synopsys Design Constraints (SDC) file
+read_sdc -echo ./../Constraints/full_adder.sdc
+
+#Synthesizes the RTL into a gate-level netlist based on the target library
+#compile
+
+compile_ultra
+
+#report_timing
+
+###### Generate reports #######
+report_area -hierarchy > ./reports/area.rpt
+report_power -hierarchy > ./reports/power.rpt
+report_timing  > ./reports/timing.rpt
+
+### To write results ###
+write -format verilog -hierarchy -output ${RESULTS_DIR}/${DCRM_FINAL_VERILOG_OUTPUT_FILE}
+
+write_sdc ./${RESULTS_DIR}/${DCRM_FINAL_SDC_OUTPUT_FILE}
+```
+
     Optimizations
     Outputs
     Checks

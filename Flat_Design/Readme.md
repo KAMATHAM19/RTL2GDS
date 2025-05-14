@@ -493,13 +493,35 @@ set_dont_use [get_lib_cells */XNOR*]
 
 #Loads timing constraints from a Synopsys Design Constraints (SDC) file
 read_sdc -echo ./../Constraints/full_adder.sdc
+```
 
+
+<img width="350" alt="pre-setup" src="https://github.com/user-attachments/assets/30a36868-c741-4355-979e-85b8316f2d2d" />
+
+<img width="398" alt="pre-hold" src="https://github.com/user-attachments/assets/058b6869-0a9c-4109-814e-d5c41cd488d6" />
+
+```
 #Synthesizes the RTL into a gate-level netlist based on the target library
-#compile
+compile
+```
 
+<img width="526" alt="compile" src="https://github.com/user-attachments/assets/e213353c-6f70-4bb0-a05a-72b4599b1cfa" />
+
+<img width="371" alt="setup" src="https://github.com/user-attachments/assets/b3e6d221-e336-4067-84e5-6c17c0102619" />
+
+<img width="373" alt="hold" src="https://github.com/user-attachments/assets/aaf63465-15ef-4061-8393-f516aa3b263d" />
+
+
+```
 compile_ultra
 
-#report_timing
+```
+<img width="898" alt="10" src="https://github.com/user-attachments/assets/38ea5642-d30e-43ff-a279-1ec2f788f7a3" />
+
+<img width="320" alt="11" src="https://github.com/user-attachments/assets/00210e7d-893e-41be-8382-3586e7a50094" />
+<img width="344" alt="12" src="https://github.com/user-attachments/assets/b7b2e0c0-175b-4bb5-a5ab-f63ce0d2ff3e" />
+
+
 
 ###### Generate reports #######
 report_area -hierarchy > ./reports/area.rpt

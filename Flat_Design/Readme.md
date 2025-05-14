@@ -161,6 +161,65 @@ Code Coverage
 5. Cross coverage – defined between coverpoints or variables to measure combinations of their values during simulation.
 
 ```
+/*four_bit_full_Adder_module full_adder (A,B,C_in,Clock,SUM,C_out)*/
+module full_adder (
+input [3:0] A, B,
+input Clock, C_in,
+output reg [3:0] SUM,
+output reg C_out 
+); 
+
+reg [3:0] reg1, reg2, sum_i;
+reg c_in, c_out;
+
+always @ (posedge Clock)
+        begin
+                reg1 <= A;
+                reg2 <= B;
+                c_in <= C_in;
+        end
+
+always @ (posedge Clock)
+        begin
+                SUM <= sum_i;
+                C_out <= c_out;
+        end
+
+always @ *
+        begin
+                {c_out, sum_i} = reg1 + reg2 + c_in;
+        end
+// Coverage Group: Track all possible combinations of inputs and outputs
+	covergroup cg_full_adder;
+
+        // Coverpoint for the input 'A'
+        coverpoint A { bins A_values = {4'b0000, 4'b0001, 4'b0010, 4'b0011, 4'b0100, 4'b0101, 4'b0110, 4'b0111}; }
+
+	// Coverpoint for the input 'B'
+        coverpoint B { bins B_values = {4'b0000, 4'b0001, 4'b0010, 4'b0011, 4'b0100, 4'b0101, 4'b0110, 4'b0111}; }
+
+	// Coverpoint for the input 'Cin'
+	coverpoint C_in { bins C_in_values = {1'b0, 1'b1}; }
+
+	// Coverpoint for the sum output
+	coverpoint SUM { bins SUM_values = {4'b0000, 4'b0001, 4'b0010, 4'b0011, 4'b0100, 4'b0101, 4'b0110, 4'b0111}; }
+
+	// Coverpoint for the carry output
+	coverpoint C_out { bins C_out_values = {1'b0, 1'b1}; }
+        endgroup
+
+	// Instantiate the coverage group
+         cg_full_adder cg_inst = new();
+
+	//coverage
+     always @ (A | B | C_in | SUM | C_out)
+     cg_inst.sample();
+    
+endmodule
+
+```
+
+```
 vcs -sverilog full_adder.v full_adder_tb.sv -full64 -lca -kdb -debug_access+all -cmline+fsm+tgl+cond
 
 ```
@@ -169,14 +228,111 @@ vcs -sverilog full_adder.v full_adder_tb.sv -full64 -lca -kdb -debug_access+all 
 ./simv
 ```
 
+<img width="815" alt="cov" src="https://github.com/user-attachments/assets/2a9d329b-58c7-4d87-b7ac-514dc7de868c" />
+
+
 ```
 Verdi -cov -covdir simv.vdb
 ```
+
+<img width="959" alt="3" src="https://github.com/user-attachments/assets/f1bf87b3-12c9-409b-979d-5ddcdb368238" />
+
+```
+/*four_bit_full_Adder_module full_adder (A,B,C_in,Clock,SUM,C_out)*/
+module full_adder (
+input [3:0] A, B,
+input Clock, C_in,
+output reg [3:0] SUM,
+output reg C_out 
+); 
+
+reg [3:0] reg1, reg2, sum_i;
+reg c_in, c_out;
+
+always @ (posedge Clock)
+        begin
+                reg1 <= A;
+                reg2 <= B;
+                c_in <= C_in;
+        end
+
+always @ (posedge Clock)
+        begin
+                SUM <= sum_i;
+                C_out <= c_out;
+        end
+
+always @ *
+        begin
+                {c_out, sum_i} = reg1 + reg2 + c_in;
+        end
+
+covergroup cg_full_adder;
+        coverpoint A;         // Coverpoint for A
+        coverpoint B;         // Coverpoint for B
+        coverpoint C_in;      // Coverpoint for Carry-in
+        coverpoint SUM;       // Coverpoint for the SUM
+        coverpoint C_out;     // Coverpoint for Carry-out
+        // You can also add cross-coverage between different signals
+        cross A, B, C_in;     // Coverage for combinations of A, B, and C_in
+        cross SUM, C_out;     // Coverage for different SUM and C_out combinations
+    endgroup
+
+    // Create coverage object
+    cg_full_adder full_adder_cov;
+
+	//initialize coverage at the beginning
+	initial begin
+	full_adder_cov = new(); //create the coverage object
+	end
+  
+	//update coverage during simulation
+	always @ (A | B | C_in | SUM | C_out)
+	begin
+ 		full_adder_cov.sample();
+	end
+
+endmodule
+```
+```
+vcs -sverilog full_adder.v -full64 -lca -kdb -debug_access+all -cmline+fsm+tgl+cond
+
+```
+
+```
+./simv
+```
+Verdi -cov -covdir simv.vdb
+
+<img width="950" alt="4" src="https://github.com/user-attachments/assets/c7b2a71b-5657-4905-9da5-b4702cbad332" />
+
 
 2. SV Methodology
 
 	
 # Linting
+spyglass
+
+<img width="336" alt="6" src="https://github.com/user-attachments/assets/1d150771-8c4e-4d98-b21c-7404919d87e5" />
+
+steps -
+ 1. Add rtl files
+ 2. Read Design
+ 3. Goal setup
+ 4. run goal
+ 5. Analyse results
+    
+
+read_file -type verilog full_adder.v
+current_goal Design_Read -alltop
+link_design -force
+
+<img width="959" alt="5" src="https://github.com/user-attachments/assets/49513bce-d73d-417b-81fc-2addbca290a9" />
+
+ run_goal
+
+ <img width="959" alt="7" src="https://github.com/user-attachments/assets/98b7d293-138d-4895-a7fb-667a3d5ed8ba" />
+
 
 # Logic Synthesis
     Translating RTL code into an optimised gate-level netlist using a specific logic library

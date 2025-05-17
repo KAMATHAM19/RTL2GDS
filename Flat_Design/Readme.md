@@ -1,20 +1,24 @@
 # Register Transfer Level (RTL)
 
-`Register Transfer Level` - RTL is a design abstraction in digital circuit design that explains how data flows between registers and the combinational logic that processes it.
+## Register Transfer Level (RTL)
 
-```
+`Register Transfer Level` (RTL) is a design abstraction in digital circuit design that explains how data flows between **registers** and the **combinational logic** that processes it.
+
+### Example:
+
+```verilog
 always @(posedge clk) begin
   if (enable)
     out_reg <= in_data + 1;
 end
-
-in_data + 1 is the combinational logic part.
-out_reg <= is the register transfer.
-The data transfer happens on the rising edge of the clock (clk).
 ```
+- in_data + 1 is the combinational logic part.
+- out_reg <= is the register transfer.
+- The data transfer happens on the rising edge of the clock (clk).
+
 ## Four-Bit Full Adder
 
-```
+```verilog
 /*four_bit_full_Adder_module */
 
 module full_adder (
@@ -51,7 +55,9 @@ endmodule
 
 ### Testbench
 
-```
+Testbench - To verify the functionality of the design.
+
+```verilog
 module testbench;
     
     reg [3:0] A, B;
@@ -95,74 +101,83 @@ endmodule
 ```
 
 
-# Simulation
+# Simulation using VCS and Verdi
 
-VCS 
+- VCS - Functional Verification Compiler Suite tool
 
 ```
 vcs -sverilog full_adder.v full_adder_tb.sv -full64 -lca -kdb -debug_access+all 
 
 ```
-
--sverilog switch
--full64  64bit Architecture
--lca     internal switches to vcs
--kdb     kernel debugger
--debug_access+all  debug all the execution process
-
-
+```bash
+-sverilog              # Enable SystemVerilog
+-full64                # 64-bit architecture
+-lca                   # Internal switches to VCS
+-kdb                   # Kernel debugger
+-debug_access+all      # Debug all the execution process
+```
 
 <img width="959" alt="1" src="https://github.com/user-attachments/assets/18c5974a-182a-483e-a0eb-93bdfd004d0d" />
-
+<br><br>
 
 To run the design
+
 
 ```
 ./simv
 
 ```
 
-
 <img width="953" alt="2" src="https://github.com/user-attachments/assets/75f5d21a-8e62-4de4-b8bd-894bd578f036" />
+<br><br>
 
 Schematic View of Design
 
-
 <img width="943" alt="fa sch" src="https://github.com/user-attachments/assets/ea96937e-1af5-4864-b6cc-846ad414eb6b" />
+<br><br>
 
 <img width="959" alt="fa sch1" src="https://github.com/user-attachments/assets/90c992c8-8bfc-4a6e-9578-94db549edd2a" />
+<br><br>
 
 
-Veridi - Waveform debug
+- Verdi - Debugging tool, waveform viewer
 
 <img width="959" alt="verdi" src="https://github.com/user-attachments/assets/a1c04dc2-ec00-4075-a4d3-bc635d89edce" />
-
-
-
+<br><br>
 
 # Verification
-   1. Coverage Analysis 
-   2. System Verilog Methodology
 
-1. Coverage Analysis - The generic term for measuring progress in completing design verification
+## 1. Coverage Analysis
+Coverage analysis is a general way to track how much of the design verification is done. It includes:
+- `Code coverage` – How much of the HDL code has been tested.
+- `Functional coverage` – How much of the design’s expected behavior has been checked.
+- `Assertion coverage` – How many assertions have been activated or verified.
 
-   Code coverage – how much of the HDL code has been exercised
+### Code Coverage Components
 
-   Functional coverage – how well the design's intended behaviour has been tested
+## Coverage Terms
 
-   Assertion coverage – how many assertions have been triggered or checked
+- **Coverpoint**  
+  A specific thing we watch or check in the testbench or input.
 
-Code Coverage
+- **Covergroups**  
+  Groups of coverpoints collected together to measure coverage easily.
 
-1. Coverpoint - the number of specific points we check or monitor in the testbench or stimulus.
-2. Covergroups – collections of coverpoints grouped to track and measure coverage in one place.
-3. Bins – specific stimulus cases or input scenarios defined to track how often they occur during simulation.
-4. Ignore bins – specific coverage points that are intentionally excluded from coverage tracking by marking them as ignore bins.
-5. Cross coverage – defined between coverpoints or variables to measure combinations of their values during simulation.
+- **Bins**  
+  Particular input cases or situations we count during simulation.
 
+- **Ignore bins**  
+  Coverage cases we choose not to include in the coverage results.
 
-1st sample covering all possible combinations
-```
+- **Cross coverage**  
+  Checking how different coverpoints or variables combine and happen together during simulation.
+
+## 2. SystemVerilog Methodology
+(Add your content here if needed.)
+
+- First example showing all possible combinations
+
+```verilog
 /*four_bit_full_Adder_module full_adder (A,B,C_in,Clock,SUM,C_out)*/
 module full_adder (
 input [3:0] A, B,
@@ -223,24 +238,21 @@ endmodule
 
 ```
 vcs -sverilog full_adder.v full_adder_tb.sv -full64 -lca -kdb -debug_access+all -cmline+fsm+tgl+cond
-
-```
-
-```
 ./simv
 ```
-
 <img width="815" alt="cov" src="https://github.com/user-attachments/assets/2a9d329b-58c7-4d87-b7ac-514dc7de868c" />
-
+<br><br>
 
 ```
 Verdi -cov -covdir simv.vdb
 ```
 
 <img width="959" alt="3" src="https://github.com/user-attachments/assets/f1bf87b3-12c9-409b-979d-5ddcdb368238" />
+<br><br>
 
-2nd sample covering 3 possible combinations
-```
+- Second example covering 3 possible combinations
+  
+```verilog
 /*four_bit_full_Adder_module full_adder (A,B,C_in,Clock,SUM,C_out)*/
 module full_adder (
 input [3:0] A, B,
@@ -298,47 +310,73 @@ covergroup cg_full_adder;
 endmodule
 ```
 ```
-vcs -sverilog full_adder.v -full64 -lca -kdb -debug_access+all -cmline+fsm+tgl+cond
-
-```
-
-```
+vcs -sverilog full_adder.v full_adder_tb.v -full64 -lca -kdb -debug_access+all -cmline+fsm+tgl+cond
 ./simv
-```
 Verdi -cov -covdir simv.vdb
+```
 
 <img width="950" alt="4" src="https://github.com/user-attachments/assets/c7b2a71b-5657-4905-9da5-b4702cbad332" />
-
+<br><br>
 
 2. SV Methodology
 
 	
-# Linting
-spyglass
+# Linting – Spyglass
 
-<img width="336" alt="6" src="https://github.com/user-attachments/assets/1d150771-8c4e-4d98-b21c-7404919d87e5" />
+**`Linting`** is the process of analyzing HDL code to detect potential errors, coding standard violations, and design issues early in the development cycle.
 
-Steps:
-1. Add RTL files
-2. Read the design
-3. Set up the goal
-4. Run the goal
-5. Analyse the results
-    
+**`Spyglass`** is a widely used linting tool for static RTL analysis in ASIC and FPGA design flows.
+
+## Key Features of Spyglass:
+
+- **Static RTL checks** – Detects syntax errors, undefined signals, latch inference, etc.
+- **Coding standard compliance** – Verifies adherence to predefined or custom coding guidelines.
+- **Clock domain crossing (CDC) analysis** – Identifies potential CDC issues.
+- **Reset domain crossing (RDC) checks** – Validates reset synchronization across domains.
+- **Design for Test (DFT) readiness** – Highlights scan-related violations and testability issues.
+- **Naming conventions and styles** – Ensures consistent signal and module naming.
+  
+<div align="center">
+  <img width="336" alt="6" src="https://github.com/user-attachments/assets/1d150771-8c4e-4d98-b21c-7404919d87e5" />
+</div>
+<br><br>
+
+
+## Benefits:
+
+- Early detection of logic issues before simulation.
+- Helps enforce design best practices.
+- Improves code maintainability and readability.
+- Saves time in the verification and integration phases.
+
+## Spyglass Linting Steps
+
+1. **Add RTL files**  
+   Provide all the Verilog/SystemVerilog source files that need to be linted.
+
+2. **Read the design**  
+   Spyglass parses and elaborates the design hierarchy from the RTL.
 ```
 read_file -type verilog full_adder.v
+ ```
+4. **Set up the goal**  
+   Define the linting goal (e.g., `lint/lint_rtl`) and configure necessary rules or constraints.
+```
 current_goal Design_Read -alltop
 link_design -force
 ```
+6. **Run the goal**  
+   Execute the linting goal to perform static checks and analyze the RTL.
+```
+run_goal
+```
+6. **Analyse the results**  
+   Review reports and fix issues like unused signals, coding violations, inferred latches, etc.
 
 <img width="959" alt="5" src="https://github.com/user-attachments/assets/49513bce-d73d-417b-81fc-2addbca290a9" />
-
-```
- run_goal
-```
-
- <img width="959" alt="7" src="https://github.com/user-attachments/assets/98b7d293-138d-4895-a7fb-667a3d5ed8ba" />
-
+<br><br>
+<img width="959" alt="7" src="https://github.com/user-attachments/assets/98b7d293-138d-4895-a7fb-667a3d5ed8ba" />
+<br><br>
 
 # Logic Synthesis
     Translating RTL code into an optimised gate-level netlist using a specific logic library

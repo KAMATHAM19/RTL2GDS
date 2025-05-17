@@ -399,7 +399,6 @@ run_goal
 </pre>
 </div>
 
-
     
 ## 🔧 Logic Synthesis Process
 
@@ -431,7 +430,6 @@ run_goal
 
 This section provides a detailed synthesis flow using Synopsys tools with SAED 32nm PDK.
 
----
 
 ## 📁 Script Setup: `rm_setup/common_setup.tcl`
 
@@ -527,7 +525,7 @@ get_libs
 
 **`Analyze`** – This command in Synopsys Design Compiler:
 
-- **Reads** the HDL (Verilog or VHDL) source files.
+- **Reads** the HDL (Verilog) source files.
 - **Checks for syntax and semantic errors** in the code.
 - **Does not build** the generic logic model of the design yet.
 - **Creates** an HDL library and stores intermediate results.
@@ -846,7 +844,7 @@ verify
 
 ### 🛠️ Main Steps in Physical Design:
 1. **Floorplanning** – Decide where each block goes on the chip.
-2. **Power Planning** – Add power and ground lines to make sure all parts get power.
+2. **Power Planning** – Add power and ground lines to ensure all parts get power.
 3. **Placement** – Place all logic cells in the right positions.
 4. **Clock Tree Synthesis (CTS)** – Spread the clock signal evenly to all parts.
 5. **Routing** – Connect all components using metal wires.
@@ -940,7 +938,7 @@ Choose the right shape and place all standard cells, macros, and IOs efficiently
 1. **Define Core Size & Shape** (based on utilization)
 2. **Create Voltage Areas** (for multi-voltage designs)
 3. **IO Pin Placement** (inputs/outputs around the periphery)
-4. **Standard Cell Row Creation** (for placing std cells)
+4. **Standard Cell Row Creation** (for placing standard cells)
 5. **Macro Placement** (for SRAMs, ROMs, etc.)
 6. **Add Blockages** (optional, to guide placement and routing)
 

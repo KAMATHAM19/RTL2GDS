@@ -1298,92 +1298,237 @@ report_global_timing
 
 
     
-# Clock Tree Synthesis
+# Clock Tree Synthesis (CTS)
 
-    inputs
-    <div align="center">
+Clock Tree Synthesis (CTS) is the process of building and optimizing the clock network in a chip. It distributes the clock signal from the source (like a PLL or clock port) to all sequential elements (flip-flops, latches) with minimal **skew** and controlled **insertion delay**.
+
+
+## 🎯 Objectives
+
+- Distribute the clock signal efficiently across the chip.
+- Minimize **clock skew** (difference in clock arrival times).
+- Control **insertion delay** (delay from source to sinks).
+- Balance setup and hold timing paths.
+
+
+## 📥 Inputs
+
+<div align="center">
 <pre>
-+----------------------------+
-|         Inputs            |
-+----------------------------+
-| 1. RTL (.v)               |
-| 2. SDC (constraints)      |
-| 3. .lib (tech library)    |
-+----------------------------+
++---------------------------------+
+|         Inputs                  |
++---------------------------------+
+| 1. Placement DB (.def)          |
+| 2. Tech File (.tf)              |
+| 3. Logical Library (.lib)       |
+| 4. Physical Library (.lef/.ndm) |
+| 5. TLUPLUS Files (.tlu)         |
+| 6. CTS Script (.tcl)            |
++---------------------------------+
 </pre>
 </div>
-    Process
-    Optimizations
-    Outputs
-    <div align="center">
+
+
+
+## ⚙️ Process
+
+### 1. Classic CTS Flow
+- Clock tree is built **independent** of data path.
+- Main goal is **skew minimization**.
+- Produces a **balanced**, often symmetric clock tree.
+- Data timing is optimized **after** clock tree synthesis.
+
+### 2. Concurrent Clock and Data (CCD) Flow
+- Clock tree is built **with data path knowledge**.
+- Focuses on **meeting timing (setup/hold)** during CTS.
+- Clock and data paths are co-optimized in iterations.
+
+
+## 📜Script
+
+```tcl
+check_design -checks pre_clock_tree_stage
+synthesize_clock_trees
+
+# Enable local skew optimization
+set_app_options -name cts.compile.enable_local_skew -value true
+set_app_options -name cts.optimize.enable_local_skew -value true
+set_app_options -name cts.compile.enable_global_route -value true
+
+# Set latency and skew targets
+get_corners
+set_clock_tree_options -target_latency 0.3 -target_skew 0.02 -corner $corner1
+
+# Run clock optimization
+clock_opt
+```
+## 🚀 Optimizations
+
+- **Skew Balancing**  
+  Equalize the arrival time of the clock signal to all flip-flops and latches to avoid timing violations.
+
+- **Latency Minimization**  
+  Reduce the total delay from the clock source to the sinks (registers) to improve timing performance.
+
+- **Buffer/Repeater Insertion**  
+  Insert buffers or inverters to strengthen the clock signal, meet transition constraints, and drive long-distance nets effectively.
+
+## 🧾 Outputs
+
+<div align="center">
 <pre>
-+----------------------------+
-|         Inputs            |
-+----------------------------+
-| 1. RTL (.v)               |
-| 2. SDC (constraints)      |
-| 3. .lib (tech library)    |
-+----------------------------+
++-----------------------------------------+
+|                 Outputs                 |
++-----------------------------------------+
+| 1. CTS Updated DB (.def)                |
+| 2. Clock Tree Reports (.rpt)            |
+| 3. Skew and Latency Data                |
+| 4. Power Report for Clock Tree          |
++-----------------------------------------+
 </pre>
 </div>
-    Checks
+
+## ✅ Checks 
+
+| **Check Command**                 | **Purpose**                                                   |
+|----------------------------------|----------------------------------------------------------------|
+| `report_clock_tree`              | Shows clock buffers, sinks, fanout levels, and structure.      |
+| `report_timing`                  | Verifies setup and hold timing after clock tree insertion.     |
+| `report_clock_skew`              | Confirms clock skew is within the allowed range.               |
+| `report_clock_latency`           | Measures delay from clock source to clock sinks.               |
+| `report_power -net_type clock`   | Reports power consumption of the entire clock network.         |
+
+
 
 # Routing
 
-    inputs
-    <div align="center">
-<pre>
-+----------------------------+
-|         Inputs            |
-+----------------------------+
-| 1. RTL (.v)               |
-| 2. SDC (constraints)      |
-| 3. .lib (tech library)    |
-+----------------------------+
-</pre>
-</div>
-    Process
-    Optimizations
-    Outputs
-    <div align="center">
-<pre>
-+----------------------------+
-|         Inputs            |
-+----------------------------+
-| 1. RTL (.v)               |
-| 2. SDC (constraints)      |
-| 3. .lib (tech library)    |
-+----------------------------+
-</pre>
-</div>
-    Checks
+**Routing** is the process of creating physical metal connections between all cells and components in the design, while following foundry-specific design rules.
 
-# Static Timing Analysis
-    inputs
-    <div align="center">
+## 🎯 Objectives
+
+- Perform pre-routing checks and setup
+- Route signal nets efficiently
+- Optimize routed design for performance and area
+- Fix DRC (Design Rule Check) violations after routing
+
+## 📥 Inputs
+
+<div align="center">
 <pre>
-+----------------------------+
-|         Inputs            |
-+----------------------------+
-| 1. RTL (.v)               |
-| 2. SDC (constraints)      |
-| 3. .lib (tech library)    |
-+----------------------------+
++---------------------------------+
+|            Inputs               |
++---------------------------------+
+| 1. CTS Database (.def)          |
+| 2. Tech File (.tf)              |
+| 3. Logical Library (.lib)       |
+| 4. Physical Library (.lef/.ndm) |
+| 5. TLUPLUS Files (.tluplus)     |
+| 6. Routing Script (.tcl)        |
++---------------------------------+
 </pre>
 </div>
-    Process
-    Optimizations
-    Outputs
-    <div align="center">
+
+## 🔄 Process
+
+1. **Clock Nets Routed Already**  
+   Clock nets are typically routed during CTS.
+
+2. **Signal Net Routing**  
+   All remaining connections are routed without moving cells.
+
+3. **Post-Route Optimization**  
+   Improves timing, area, and fixes any violations.
+
+
+## 📜 Script
+
+```tcl
+check_design -checks pre_route_stage
+
+# Enable timing and crosstalk awareness
+set_app_options -name route.global.timing_driven -value true
+set_app_options -name route.global.crosstalk_driven -value true
+set_app_options -name route.track.timing_driven -value true
+set_app_options -name route.track.crosstalk_driven -value true
+set_app_options -name route.detail.timing_driven -value true
+set_app_options -name route.detail.antenna -value true
+
+# Antenna effect fixing using diodes
+set_app_options -name route.detail.antenna_fixing_preference -value use_diodes
+set_app_options -block [current_block] -name route.detail.diode_libcell_names -value {*/ANTENNA}
+set_app_options -block [current_block] -name route.detail.diode_libcell_names -value {*/ANTENNA_HVT}
+set_app_options -block [current_block] -name route.detail.diode_libcell_names -value {*/ANTENNA_RVT}
+
+# Routing commands
+route_global
+route_track
+route_detail
+route_opt
+
+# Reports and Exports
+report_timing
+report_design -all
+check_lvs
+check_routes
+check_routability
+
+# Export final files
+write_verilog ./data/eight_bit_full_adder_routed_netlist.v
+write_parasitics -format spef -output ./data/eight_bit_full_adder_func_slow.spef
+write_gds -design eight_bit_full_adder ./data/eight_bit_full_adder.gds
+write_def -design eight_bit_full_adder ./data/eight_bit_full_adder_routing.def
+create_frame ./data/eight_bit_full_adder.frame
+write_lef -design eight_bit_full_adder ./data/eight_bit_full_adder.lef
+
+```
+## 🚀 Optimizations
+
+- **Reduce Coupling Capacitance:**  
+  Lower interference between nearby wires to avoid crosstalk and signal integrity issues.
+
+- **Meet Timing Constraints (Setup/Hold):**  
+  Ensure all signal paths meet required setup and hold time margins for reliable operation.
+
+- **Minimize IR Drop and Electromigration (EM):**  
+  Use proper metal width and routing strategies to avoid voltage drop and prevent long-term metal degradation.
+
+- **Ensure Design Rule Compliance (DRC):**  
+  Follow foundry-specific spacing, width, and density rules to ensure the chip is manufacturable.
+
+- **Reduce Noise and Power Issues:**  
+  Optimize routes to minimize switching noise and unnecessary dynamic/static power consumption.
+
+- **Compact Routing to Save Area:**  
+  Efficiently utilize routing resources to reduce overall chip area and improve yield.
+
+## 🧾 Outputs
+
+  <div align="center">
 <pre>
-+----------------------------+
-|         Inputs            |
-+----------------------------+
-| 1. RTL (.v)               |
-| 2. SDC (constraints)      |
-| 3. .lib (tech library)    |
-+----------------------------+
++-------------------------------------------+
+|                  Outputs                  |
++-------------------------------------------+
+| 1. Final Routed Design (DEF/GDSII)        |
+| 2. Parasitic Extraction File (SPEF)       |
+| 3. Final Timing Reports                    |
+| 4. Congestion Maps                         |
+| 5. LVS-Ready Netlist                       |
++-------------------------------------------+
 </pre>
 </div>
-    Checks
+
+## Checks 
+
+| Check            | Purpose                                        |
+|------------------|------------------------------------------------|
+| `check_routability` | Verifies that all nets can be routed cleanly   |
+| `check_lvs`         | Ensures layout vs schematic consistency        |
+| `check_routes`      | Detects any open or short connections           |
+| `report_timing`     | Validates that timing requirements are met     |
+| `report_congestion` | Highlights congested areas in the design        |
+| `report_drc`        | Ensures no DRCs exist in final routed layout    |
+
+
+
+
 

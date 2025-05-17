@@ -704,6 +704,65 @@ To ensure correctness and meet design goals, several checks are carried out:
 - **Linting (Optional)**
   - Style, coding guidelines, and basic synthesis warnings
 
+# Formality Equivalence Checking
+
+### What is Synopsys Formality?  
+Synopsys Formality is a tool used to verify that the RTL design and the synthesized gate-level netlist are functionally equivalent. It uses **mathematical proofs** rather than simulation to ensure no unintended changes occurred during synthesis.
+
+### Why is Formality important?  
+- **Validate correctness:** Confirms that the synthesized design matches the original RTL.  
+- **Catch errors:** Detects synthesis bugs or missed constraints early.  
+- **Improve confidence:** Helps ensure the design is ready for place-and-route and tape-out.
+
+### Objective of this Formality run  
+- Verify that the `full_adder` RTL module (`full_adder.v`) and the synthesized netlist (`full_adder.mapped.v`) behave identically.  
+- Identify any logical mismatches in combinational or sequential logic.  
+- Confirm that synthesis constraints and mapping are correctly applied.  
+- Maintain a clear and traceable formal verification flow.
+
+### Input Files 
+ 
+<div align="center">
+<pre>
++----------------------------------------+
+|               Inputs                   |
++----------------------------------------+
+| 1. RTL Source Code: full_adder.v       |
+| 2. Synthesized Netlist:                |
+|    full_adder.mapped.v                 |
+| 3. Standard Cell Library:              |
+|    saed32rvt_tt0p78vn40c.db (Liberty)|
+| 4. TCL Script for Formality:           |
+|    formality_script.tcl                |
++----------------------------------------+
+</pre>
+</div>
+
+## Script 
+
+```
+# Read RTL into reference container
+read_verilog -container r -libname WORK -01 {./full_adder.v}
+set_top r:/WORK/full_adder
+```
+```
+# Read synthesized netlist into implementation container
+read_verilog -container i -libname WORK -01 {./results/full_adder.mapped.v}
+set_top i:/WORK/full_adder
+```
+````
+# Load the standard cell library for mapping
+read_db {/data/pdk/pdk32nm/SAED32_EDK/lib/stdcell_rvt/db_ccs/saed32rvt_tt0p78vn40c.db}
+```
+```
+# Match design structures
+match
+```
+```
+# verify design
+verify
+```
+
 
 
 # Floorplan

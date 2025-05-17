@@ -693,32 +693,91 @@ During synthesis, Design Compiler performs various optimizations to improve perf
 
 ### ✅ **Checks Performed**
 
+### ✅ Synthesis Checks
+
 To ensure correctness and meet design goals, several checks are carried out:
 
-- **Functional Equivalence Check (FEC)**
-  - Ensures synthesized netlist matches RTL behavior
-- **Timing Analysis (Pre-Layout)**
-  - Static timing analysis (STA) using defined SDC constraints
-- **Design Rule Checks (DRCs)**
-  - Checks for violations in logic structure or technology rules
-- **Linting (Optional)**
-  - Style, coding guidelines, and basic synthesis warnings
+1. **Logical Equivalence Check (LEC)**  
+   ➤ Ensures that the synthesized **netlist** matches the original **RTL behavior**  
+   ➤ Typically performed using **Synopsys Formality**
+
+2. **Timing Analysis (Pre-Layout)**  
+   ➤ Uses **Static Timing Analysis (STA)** based on defined **SDC constraints**  
+   ➤ Validates setup and hold timing across all paths
+
+3. **Design Rule Checks (DRCs)**  
+   ➤ Detects logic or structural violations  
+   ➤ Ensures compliance with technology-specific rules
+
+4. **Linting (Optional)**  
+   ➤ Checks for code quality, coding style, and common issues  
+   ➤ Helps detect synthesis warnings or unintentional logic
+
+5. **Tool-Specific Checks (Design Compiler)**  
+   - `check_design`: Confirms proper connectivity, hierarchy, and constraints  
+   - `check_timing`: Validates timing constraints are correctly defined and met
+
 
 # Formality Equivalence Checking
 
-### What is Synopsys Formality?  
-Synopsys Formality is a tool used to verify that the RTL design and the synthesized gate-level netlist are functionally equivalent. It uses **mathematical proofs** rather than simulation to ensure no unintended changes occurred during synthesis.
+## 🔍 What is Equivalence Checking?
 
-### Why is Formality important?  
-- **Validate correctness:** Confirms that the synthesized design matches the original RTL.  
-- **Catch errors:** Detects synthesis bugs or missed constraints early.  
-- **Improve confidence:** Helps ensure the design is ready for place-and-route and tape-out.
+Equivalence checking is a formal verification technique used to **mathematically prove** that two versions of a design (typically the **RTL** and the **synthesized netlist**) behave **identically**. Unlike simulation-based functional verification, equivalence checking doesn't require test vectors — making it **faster** and **more exhaustive**.
 
-### Objective of this Formality run  
-- Verify that the `full_adder` RTL module (`full_adder.v`) and the synthesized netlist (`full_adder.mapped.v`) behave identically.  
-- Identify any logical mismatches in combinational or sequential logic.  
-- Confirm that synthesis constraints and mapping are correctly applied.  
-- Maintain a clear and traceable formal verification flow.
+
+
+## ✅ Why Use Equivalence Checking?
+
+- Verifies if a design remains functionally the same after:
+  - **Synthesis**
+  - **Engineering Change Orders (ECOs)**
+  - **Optimization passes**
+
+- **Catches bugs** that simulation might miss due to limited input coverage.
+
+
+
+## ⚙️ How Does It Work?
+
+Equivalence checking generally follows three key steps:
+
+1. **Setup**  
+   ➤ Load both designs: the original **reference (RTL)** and the **revised (netlist)**.
+
+2. **Mapping**  
+   ➤ Match corresponding elements (e.g., ports, outputs) between the two designs.
+
+3. **Compare**  
+   ➤ Formally check if the mapped elements behave identically (or are logically equivalent/inverted).
+
+<img width="367" alt="fec" src="https://github.com/user-attachments/assets/371cdf8d-2b09-4f65-a6d5-ab3b69877bc4" />
+
+
+## 🚀 Why Is It Important?
+
+Modern chip development involves many tools and transformation steps. These can introduce **unintended changes** to design behavior. Simulation alone can miss these.
+
+Equivalence checking provides:
+
+- ✅ Confidence that synthesis or optimization did not alter functionality  
+- 🔒 Safety against overlooked bugs  
+- 📈 Improved design quality and verification coverage
+
+
+
+## 💡 Benefits
+
+- ⚡ **Faster** than exhaustive simulation  
+- 🧠 **Mathematically complete** (covers all cases)  
+- 🧩 **Finds hidden mismatches** in logic or structure  
+- 📦 **Improves reliability** before tape-out
+
+
+
+## 🔗 Reference
+
+[Synopsys: What is Equivalence Checking?](https://www.synopsys.com/glossary/what-is-equivalence-checking.html)
+
 
 ### Input Files 
  

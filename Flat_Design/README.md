@@ -1155,33 +1155,148 @@ analyze_power_plan -report_track_utilization_only
 | `check_pg_missing_vias`| Identify any missing vias in power/ground connections|
 
 # Placement
-    inputs
-    <div align="center">
+
+**Placement** is the process of assigning physical locations to all the standard cells inside a chip’s core area.
+
+
+## 🎯 Objectives
+
+- Place all cells inside the core without overlaps
+- Optimize timing (WNS/TNS), power, and area
+- Minimize wirelength and congestion
+- Ensure legality and design rule compliance
+
+## 📥 Inputs
+
+<div align="center">
 <pre>
-+----------------------------+
-|         Inputs            |
-+----------------------------+
-| 1. RTL (.v)               |
-| 2. SDC (constraints)      |
-| 3. .lib (tech library)    |
-+----------------------------+
++-------------------------------+
+|            Inputs             |
++-------------------------------+
+| 1. Powerplan Database (.def)  |
+| 2. Library File (.lib)        |
+| 3. SDC (Timing Constraints)   |
+| 4. Placement Script (.tcl)    |
+| 5. MCMM Setup File            |
+| 6. TLUPLUS File               |
+| 7. Layer Map (MAP File)       |
++-------------------------------+
 </pre>
 </div>
-    Process
-    Optimizations
-    Outputs
-    <div align="center">
+
+## ⚙️ Placement Process
+
+1. **Pre-Placement Checks**
+   - No floating nets or cells
+   - Pins and macros placed and fixed
+   - Power grid routes are free of DRCs
+
+2. **Initial Coarse Placement**
+   - Cells roughly placed based on congestion and timing
+   - Wirelength is minimized
+   - Better RC improves early timing
+
+3. **High Fanout Net Buffering**
+   - Buffers inserted to handle nets with many loads
+
+4. **Initial Optimization**
+   - First pass of timing fixing
+   - Improve WNS, reduce TNS
+   - Move cells to meet constraints
+
+5. **Final Placement**
+   - Tool performs timing-driven placement
+
+6. **Final Optimization**
+   - Focus on optimizing for power, area, and final timing closure
+
+## 📜 Script 
+
+```tcl
+set PDK_PATH /data/pdk/pdk32nm/SAED32_EDK/
+set Constraints ./../Constraints/full_adder.sdc
+
+# Pre-placement checks
+check_design -checks pre_placement_stage
+set_app_options -name place.coarse.continue_on_missing_scandef -value true
+
+# Remove existing scenarios
+remove_mode -all
+remove_corner -all
+remove_scenario -all
+
+# Define a new scenario
+set mode1 "func"
+set corner1 "slow"
+set scenario1 "${mode1}_${corner1}"
+
+create_mode $mode1
+create_corner $corner1
+create_scenario -name $scenario1 -mode $mode1 -corner $corner1
+report_scenarios
+
+# Setup parasitics
+set parasitic1 "p1"
+set tluplus_filep1 "$PDK_PATH/tech/star_rcxt/saed32nm_1p9m_Cmax.tluplus"
+set layer_map_filep1 "$PDK_PATH/tech/star_rcxt/saed32nm_tf_itf_tluplus.map"
+
+read_parasitic_tech -tlup $tluplus_filep1 -layermap $layer_map_filep1 -name p1
+set_parasitic_parameters -late_spec $parasitic1 -early_spec $parasitic1
+
+# Apply constraints and scenarios
+source $Constraints
+set_scenario_status func_fast -hold false -setup true -leakage_power true -dynamic_power true -max_capacitance true -min_capacitance false -max_transition true -active true
+
+# Perform placement
+place_opt
+legalize_placement
+
+# Reports
+report_congestion
+report_placement
+report_utilization
+report_cells
+report_timing
+report_global_timing
+```
+
+## 🚀 Optimizations
+
+- **Timing-Driven Placement**  
+  Improve setup/hold slack by adjusting cell locations based on timing analysis.
+
+- **Clustering**  
+  Group related logic together to reduce interconnect delays and improve routing efficiency.
+
+- **Power-Aware Placement**  
+  Minimize dynamic power by shortening high-activity nets and strategically placing power-hungry cells.
+
+## 📤 Outputs
+
+<div align="center">
 <pre>
-+----------------------------+
-|         Inputs            |
-+----------------------------+
-| 1. RTL (.v)               |
-| 2. SDC (constraints)      |
-| 3. .lib (tech library)    |
-+----------------------------+
++-------------------------------+
+|           Outputs            |
++-------------------------------+
+| 1. Placement DB (.def)       |
+| 2. Congestion Maps           |
+| 3. Timing Reports            |
+| 4. Pin and Cell Density Data |
++-------------------------------+
 </pre>
 </div>
-    Checks
+
+## ✅ Checks After Placement
+
+| Check Command             | Purpose                                           |
+|---------------------------|---------------------------------------------------|
+| `check_legality -verbose` | Ensure cells are not overlapping or misaligned    |
+| `report_utilization`      | Shows core usage percentage                       |
+| **Timing Checks**         | Check setup and hold violations                   |
+| `report_congestion`       | Identify areas with dense routing                 |
+| **DRC Checks**            | Ensure spacing and layout rules are followed      |
+
+
     
 # Clock Tree Synthesis
 

@@ -1032,24 +1032,130 @@ After completing the floorplan stage, several essential checks are performed to 
 | Visual inspection (GUI)    | Manual review of macro placement, congestion hotspots, and pin access. |
 
 
-# Powerplan
-    inputs
-    <div align="center">
+#  Power Plan
+
+Power planning is a **pre-routing** step in the physical design flow. It ensures a stable and reliable power supply across the chip by building a **Power Delivery Network (PDN).**
+
+
+### 🎯 Objectives
+
+1. **Uniform power distribution** – All cells in the design should get the right amount of power.
+2. **Minimize IR drop** – Reduce voltage loss across the chip.
+3. **Prevent electromigration** – Avoid metal damage due to high current density.
+4. **Ensure reliability** – Ensure the IC functions safely and efficiently under all conditions.
+
+---
+
+## 📥 Inputs
+
+<div align="center">
 <pre>
 +----------------------------+
 |         Inputs            |
 +----------------------------+
-| 1. RTL (.v)               |
-| 2. SDC (constraints)      |
-| 3. .lib (tech library)    |
+| 1. Floorplan Database (.def) |
+| 2. Powerplan Scripts (.tcl) |
 +----------------------------+
 </pre>
 </div>
-    Process
-    Optimizations
-    Outputs
-    Checks
-    
+
+
+## 🛠️ Process
+
+### 1. Create Core Power Rings  
+**Purpose:** Distribute power (VDD/VSS) from the chip’s I/O pads around the core area.  
+**Description:** Wide metal loops (usually on top layers like M7 or M8) that surround the core.  
+**Function:** Acts as the main conduit for power entering the core.
+
+
+### 🔌 2. Create Power Mesh / Straps / Stripes  
+**Purpose:** Deliver power deeper into the core from the power rings.  
+**Description:** A grid-like network of vertical and horizontal metal lines (called stripes or straps) spanning the core.  
+**Function:** Ensures even and robust power delivery across the entire block.
+
+
+### 🧱 3. Create Standard Cell Rails  
+**Purpose:** Provide direct power to the standard cells (logic gates, flip-flops, etc.).  
+**Description:** Thin metal rails (usually on lower layers like M1 or M2) inside each standard cell row.  
+**Function:** Connects to the power mesh above via vias, supplying VDD and VSS locally to each cell.
+
+## 📜 Script 
+
+```tcl
+# Clean previous PG strategies and routes
+remove_pg_strategies -all
+remove_pg_patterns -all
+remove_pg_regions -all
+remove_pg_via_master_rules -all
+remove_pg_strategy_via_rules -all
+remove_routes -net_types {power ground} -ring -stripe -lib_cell_pin_connect
+
+# Create power/ground ports and nets
+create_port -direction in VDD
+create_port -direction in VSS
+create_net -power VDD
+create_net -ground VSS
+connect_pg_net -pg -design full_adder -automatic -all_blocks
+
+# Define core ring
+create_pg_ring_pattern core_ring_pattern \
+  -horizontal_layer M7 -horizontal_width 0.5 -horizontal_spacing 0.45 \
+  -vertical_layer M8 -vertical_width 0.5 -vertical_spacing 0.45
+
+set_pg_strategy core_power_ring \
+  -core -pattern {{name:core_ring_pattern} {nets:{VDD VSS}} {offset:{1 1}}}
+
+compile_pg -strategies core_power_ring
+
+# Define mesh pattern
+create_pg_mesh_pattern mesh -layers {\
+  {{vertical_layer:M6} {width:0.5} {spacing:interleaving} {pitch:2} {offset:1}} \
+  {{horizontal_layer:M5} {width:0.5} {spacing:interleaving} {pitch:2} {offset:1}}}
+
+set_pg_strategy core_mesh \
+  -pattern {{name:mesh} {nets:VDD VSS}} -core -extension {stop:innermost_ring}
+compile_pg -strategies core_mesh
+
+# Standard cell rail connection
+create_pg_std_cell_conn_pattern std_cell_rail -layers M1 -rail_width 0.2
+set_pg_strategy rail_strategy \
+  -core -pattern {{name:std_cell_rail} {nets:VDD VSS}}
+compile_pg -strategies rail_strategy
+
+# Power analysis
+report_power
+report_power_calculation
+report_power_domains
+analyze_power_plan -nets {VDD VSS} -power_budget 1000
+analyze_power_plan -report_track_utilization_only
+```
+## Powerplan Optimizations
+
+- Minimize IR drop by adjusting stripe width, pitch, and metal layer usage.
+- Balance power distribution across metal layers.
+- Place macros close to critical blocks to ensure they get clean and stable power.
+
+## Outputs
+<div align="center">
+<pre>
++-----------------------------------------+
+|               Outputs                   |
++-----------------------------------------+
+| 1. Powerplan Database (.def or .fp)    |
+| 2. PG Connectivity Reports (.rpt)      |
+| 3. Power Analysis Reports               |
++-----------------------------------------+
+</pre>
+</div>
+
+## Checks 
+
+| Check                  | Purpose                                               |
+|------------------------|------------------------------------------------------|
+| `check_pg_drcs`        | Ensure PG-related DRCs are not violated              |
+| `check_pg_connectivity`| Confirm VDD/VSS nets are fully connected to all cells|
+| `check_pg_missing_vias`| Identify any missing vias in power/ground connections|
+
 # Placement
     inputs
     <div align="center">

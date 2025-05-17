@@ -662,22 +662,91 @@ report_timing  > ./reports/timing.rpt
 write -format verilog -hierarchy -output ${RESULTS_DIR}/${DCRM_FINAL_VERILOG_OUTPUT_FILE}
 write_sdc ./${RESULTS_DIR}/${DCRM_FINAL_SDC_OUTPUT_FILE}
 ```
+### 🔧 **Optimizations**
+
+During synthesis, Design Compiler performs various optimizations to improve performance, area, and power:
+
+- **Logic Optimization**
+  - Boolean simplification
+  - Constant propagation
+- **Technology Mapping**
+  - Mapping generic logic (GTECH) to technology-specific library cells
+- **Retiming**
+  - Moving flip-flops across logic gates to balance timing
+- **Resource Sharing**
+  - Reusing hardware resources (e.g., adders, multipliers) to save area
+
+### 📤 Outputs
+    <div align="center">
+<pre>
++----------------------------+
+|         Outputs           |
++----------------------------+
+| 1. Gate-level netlist (.v)               |
+| 2. mapped SDC constraints     |
+| 3. Reports - Area/Power/Timing    |
++----------------------------+
+</pre>
+</div>
+    
+
+### ✅ **Checks Performed**
+
+To ensure correctness and meet design goals, several checks are carried out:
+
+- **Functional Equivalence Check (FEC)**
+  - Ensures synthesized netlist matches RTL behavior
+- **Timing Analysis (Pre-Layout)**
+  - Static timing analysis (STA) using defined SDC constraints
+- **Design Rule Checks (DRCs)**
+  - Checks for violations in logic structure or technology rules
+- **Linting (Optional)**
+  - Style, coding guidelines, and basic synthesis warnings
 
 
-
- Optimizations
-    Outputs
-    Checks
 
 # Floorplan
     inputs
+    <div align="center">
+<pre>
++----------------------------+
+|         Inputs            |
++----------------------------+
+| 1. RTL (.v)               |
+| 2. SDC (constraints)      |
+| 3. .lib (tech library)    |
++----------------------------+
+</pre>
+</div>
     Process
     Optimizations
     Outputs
+    <div align="center">
+<pre>
++----------------------------+
+|         Inputs            |
++----------------------------+
+| 1. RTL (.v)               |
+| 2. SDC (constraints)      |
+| 3. .lib (tech library)    |
++----------------------------+
+</pre>
+</div>
     Checks
     
 # Powerplan
     inputs
+    <div align="center">
+<pre>
++----------------------------+
+|         Inputs            |
++----------------------------+
+| 1. RTL (.v)               |
+| 2. SDC (constraints)      |
+| 3. .lib (tech library)    |
++----------------------------+
+</pre>
+</div>
     Process
     Optimizations
     Outputs
@@ -685,30 +754,118 @@ write_sdc ./${RESULTS_DIR}/${DCRM_FINAL_SDC_OUTPUT_FILE}
     
 # Placement
     inputs
+    <div align="center">
+<pre>
++----------------------------+
+|         Inputs            |
++----------------------------+
+| 1. RTL (.v)               |
+| 2. SDC (constraints)      |
+| 3. .lib (tech library)    |
++----------------------------+
+</pre>
+</div>
     Process
     Optimizations
     Outputs
+    <div align="center">
+<pre>
++----------------------------+
+|         Inputs            |
++----------------------------+
+| 1. RTL (.v)               |
+| 2. SDC (constraints)      |
+| 3. .lib (tech library)    |
++----------------------------+
+</pre>
+</div>
     Checks
     
 # Clock Tree Synthesis
 
     inputs
+    <div align="center">
+<pre>
++----------------------------+
+|         Inputs            |
++----------------------------+
+| 1. RTL (.v)               |
+| 2. SDC (constraints)      |
+| 3. .lib (tech library)    |
++----------------------------+
+</pre>
+</div>
     Process
     Optimizations
     Outputs
+    <div align="center">
+<pre>
++----------------------------+
+|         Inputs            |
++----------------------------+
+| 1. RTL (.v)               |
+| 2. SDC (constraints)      |
+| 3. .lib (tech library)    |
++----------------------------+
+</pre>
+</div>
     Checks
 
 # Routing
 
     inputs
+    <div align="center">
+<pre>
++----------------------------+
+|         Inputs            |
++----------------------------+
+| 1. RTL (.v)               |
+| 2. SDC (constraints)      |
+| 3. .lib (tech library)    |
++----------------------------+
+</pre>
+</div>
     Process
     Optimizations
     Outputs
+    <div align="center">
+<pre>
++----------------------------+
+|         Inputs            |
++----------------------------+
+| 1. RTL (.v)               |
+| 2. SDC (constraints)      |
+| 3. .lib (tech library)    |
++----------------------------+
+</pre>
+</div>
     Checks
 
 # Static Timing Analysis
     inputs
+    <div align="center">
+<pre>
++----------------------------+
+|         Inputs            |
++----------------------------+
+| 1. RTL (.v)               |
+| 2. SDC (constraints)      |
+| 3. .lib (tech library)    |
++----------------------------+
+</pre>
+</div>
     Process
     Optimizations
     Outputs
+    <div align="center">
+<pre>
++----------------------------+
+|         Inputs            |
++----------------------------+
+| 1. RTL (.v)               |
+| 2. SDC (constraints)      |
+| 3. .lib (tech library)    |
++----------------------------+
+</pre>
+</div>
     Checks

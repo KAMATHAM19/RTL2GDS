@@ -386,15 +386,19 @@ run_goal
 
 <div align="center">
 <pre>
-+----------------------------+
-|         Inputs            |
-+----------------------------+
-| 1. RTL (.v)               |
-| 2. SDC (constraints)      |
-| 3. .lib (tech library)    |
-+----------------------------+
++-----------------------------------------+
+|                 Inputs                  |
++-----------------------------------------+
+| 1. RTL (.v)                             |
+| 2. SDC (constraints)                    |
+| 3. .lib (Liberty format)                |
+| 4. .tf (Technology file)                |
+| 5. TLU+ files (Cmax/Cmin extraction)    |
+| 6. Map file (TLU+ mapping file)         |
++-----------------------------------------+
 </pre>
 </div>
+
 
     
 ## 🔧 Logic Synthesis Process
@@ -682,7 +686,7 @@ During synthesis, Design Compiler performs various optimizations to improve perf
 <div align="center">
 <pre>
 +----------------------------------+
-|         Inputs                   |
+|         Outputs                  |
 +----------------------------------+
 | 1. Gate level netlist (.v)       |
 | 2. Mapped SDC constraints        |
@@ -787,10 +791,10 @@ Equivalence checking provides:
 |               Inputs                   |
 +----------------------------------------+
 | 1. RTL Source Code: full_adder.v       |
-| 2. Synthesized Netlist:                |
+| 2. Standard Cell Library:              |
+|    saed32rvt_tt0p78vn40c.db (Liberty)  |
+| 3. Synthesized Netlist:                |
 |    full_adder.mapped.v                 |
-| 3. Standard Cell Library:              |
-|    saed32rvt_tt0p78vn40c.db (Liberty)|
 | 4. TCL Script for Formality:           |
 |    formality_script.tcl                |
 +----------------------------------------+
@@ -799,60 +803,235 @@ Equivalence checking provides:
 
 ## Script 
 
+Command to open tool
 ```
-# Read RTL into reference container
+formality
+```
+1. Reference Design
+
+```tcl
+#Read RTL into reference container
 read_verilog -container r -libname WORK -01 {./full_adder.v}
-set_top r:/WORK/full_adder
 ```
-```
-# Read synthesized netlist into implementation container
-read_verilog -container i -libname WORK -01 {./results/full_adder.mapped.v}
-set_top i:/WORK/full_adder
-```
-````
+
+2. library file
+   
+```tcl
 # Load the standard cell library for mapping
 read_db {/data/pdk/pdk32nm/SAED32_EDK/lib/stdcell_rvt/db_ccs/saed32rvt_tt0p78vn40c.db}
 ```
+3. Implementation Design
+
+```
+# Read synthesized netlist into implementation container
+read_verilog -container i -libname WORK -01 {./full_adder.mapped.v}
+```
+4. Match
 ```
 # Match design structures
 match
 ```
+5. Verify
 ```
 # verify design
 verify
 ```
+6. Debug
+   
+# Physical Design 
 
+## 🧱 What is Physical Design?
 
+**Physical Design** is the process of turning a digital design (like Verilog code) into a physical layout that can be manufactured.
 
-# Floorplan
-    inputs
-    <div align="center">
+### 🛠️ Main Steps in Physical Design:
+1. **Floorplanning** – Decide where each block goes on the chip.
+2. **Power Planning** – Add power and ground lines to make sure all parts get power.
+3. **Placement** – Place all logic cells in the right positions.
+4. **Clock Tree Synthesis (CTS)** – Spread the clock signal evenly to all parts.
+5. **Routing** – Connect all components using metal wires.
+6. **Timing and Power Analysis** – Check that the chip is fast and power-efficient.
+7. **DRC (Design Rule Check)** – Make sure the layout follows manufacturing rules.
+
+### 🎯 Goal:
+To create a chip layout that works correctly, uses power efficiently, and is ready for manufacturing.
+
+## 1. Import Design / Netlist
+
+The first step in the physical design flow involves loading all necessary files into the tool and performing initial checks to ensure everything is correctly set up.
+
+### What to Import
+
+- **Gate-level netlist** (from synthesis)  
+- **Timing constraints** (SDC file)  
+- **Power intent** (UPF or CPF)  
+- **Standard cell libraries** (logic and physical views)  
+- **IP blocks** used in the design  
+- **Floorplan files** (DEF)  
+- **Technology file**  
+- **RC data** (resistance/capacitance info)  
+
+### Checks After Import
+
+- Check for errors or warnings during file loading, especially for netlist, constraints, and power files  
+- Ensure no empty modules or duplicate blocks (check uniquification)  
+- Run low-power checks for multi-voltage designs  
+- Identify `assign` or `tri` statements that might cause issues later  
+- Perform a quick timing check to spot early violations (WNS/TNS)  
+
+### Why Timing Checks Are Important
+
+Timing results may differ between synthesis and physical tools (like ICC or Innovus) due to tool differences or constraint mismatches. Early timing checks help avoid surprises later and ensure a smoother design flow.
+
+---
+
+### TCL Script for ICC2 Physical Implementation
+
+```tcl
+# Start ICC2 GUI
+start_gui
+
+# Set the PDK path
+set PDK_PATH /data/pdk/pdk32nm/SAED32_EDK/
+
+# Create a design library referencing the standard cell library
+create_lib -ref_libs $PDK_PATH/lib/stdcell_rvt/ndm/saed32rvt_c.ndm final
+
+# Read the synthesized gate-level netlist into the final library and specify the top module
+read_verilog {./../DC/results/full_adder.mapped.v} -library final -design full_adder -top full_adder
+
+# Link the design blocks
+link_block
+
+# Run netlist checks for errors and warnings
+check_netlist
+
+# Run pre-floorplan design checks
+check_design -checks dp_pre_floorplan
+
+```
+
+# Floorplan 
+
+The **Floorplan** is the initial and crucial step in physical design. It defines the rough layout of the chip, including block shape, core area, pin placements, power domains, and macro positions — laying the foundation for the rest of the PnR (Place and Route) flow.
+
+## 🎯 Objective
+
+Choose the right shape and place all standard cells, macros, and IOs efficiently inside the **core area** to meet timing, area, and power goals.
+
+## 📥 Inputs
+
+<div align="center">
 <pre>
-+----------------------------+
-|         Inputs            |
-+----------------------------+
-| 1. RTL (.v)               |
-| 2. SDC (constraints)      |
-| 3. .lib (tech library)    |
-+----------------------------+
++-----------------------------------------+
+|                 Inputs                  |
++-----------------------------------------+
+| 1. Mapped Netlist (.v)                  |
+| 2. Library File (.ndm)                  |
+| 3. SDC (Timing Constraints)             |
+| 4. Floorplan TCL Script (.tcl)          |
+| 5. Technology File (optional)           |
++-----------------------------------------+
 </pre>
 </div>
-    Process
-    Optimizations
-    Outputs
-    <div align="center">
+
+## ⚙️ Floorplanning Steps
+
+1. **Define Core Size & Shape** (based on utilization)
+2. **Create Voltage Areas** (for multi-voltage designs)
+3. **IO Pin Placement** (inputs/outputs around the periphery)
+4. **Standard Cell Row Creation** (for placing std cells)
+5. **Macro Placement** (for SRAMs, ROMs, etc.)
+6. **Add Blockages** (optional, to guide placement and routing)
+
+## 🔢 Area Estimation Formula
+
+Core Area = Standard Cell Area / Core Utilization
+
+
+For a square floorplan, use:
+
+```tcl
+initialize_floorplan \
+  -core_utilization 0.65 \
+  -side_ratio {20 20} \
+  -core_offset {3}
+```
+Ports Placement 
+```
+# Pin Constraints
+set_individual_pin_constraints -sides 1 \
+  -ports [remove_from_collection [all_inputs] "Clock C_in"] \
+  -pin_spacing 5
+place_pins -ports [all_inputs]
+
+set_individual_pin_constraints -sides 2 \
+  -ports [get_ports "Clock C_in"] \
+  -pin_spacing 5
+place_pins -ports {Clock C_in}
+
+set_individual_pin_constraints -sides 3 \
+  -ports [all_outputs] \
+  -pin_spacing 5
+place_pins -ports [all_outputs]
+```
+
+   ## ⚡ Floorplan Optimizations
+
+Effective floorplanning sets the stage for meeting timing, area, and power goals. Below are key optimization strategies used during the floorplanning stage:
+
+- **Minimize Congestion**  
+  Place macros and IO pins in a way that reduces dense routing areas, especially in critical regions. Use blockages if necessary to guide placement.
+
+- **Macro Alignment**  
+  Align and group macros (like SRAMs, IPs) based on functionality, power domains, and routing ease. This improves accessibility and signal integrity.
+
+- **Utilization Balance**  
+  Maintain a balanced core utilization across the floorplan. Over-utilized areas can cause routing failures and timing violations later in the flow.
+
+- **Timing-Aware Planning**  
+  Place high-speed and critical-path logic close together to reduce delay. Keep clocked elements and key data paths short and direct for better performance.
+
+> 💡 Good floorplan decisions early on greatly reduce design iterations and help achieve closure faster.
+
+<div align="center">
 <pre>
-+----------------------------+
-|         Inputs            |
-+----------------------------+
-| 1. RTL (.v)               |
-| 2. SDC (constraints)      |
-| 3. .lib (tech library)    |
-+----------------------------+
++-----------------------------------------+
+|               Outputs                   |
++-----------------------------------------+
+| 1. Floorplan Database (.def)            |
+| 2. Pin Placement Report (.rpt)          |
+| 3. Area and Utilization Report          |
+| 4. Updated Design Library (.ddc)        |
++-----------------------------------------+
 </pre>
 </div>
-    Checks
-    
+
+ ## ✅ Checks After Floorplan
+
+After completing the floorplan stage, several essential checks are performed to ensure the design is legal, efficient, and ready for placement.
+
+### 🔍 Checks
+
+| Check Command               | Purpose                                                                 |
+|----------------------------|-------------------------------------------------------------------------|
+| `check_legality`           | Ensures cells/macros follow legal placement rules (no overlaps, gaps). |
+| `check_pin_placement`      | Verifies that input/output pins are correctly placed and constrained.   |
+| `check_floorplan`          | Checks for unplaced macros, missing core rows, and blockages.           |
+| `report_utilization`       | Summarizes cell area, core area, and utilization.                       |
+| `report_area`              | Reports area breakdown for logic, macros, etc.                          |
+| `check_power_domains`      | Validates correctness of MV (multi-voltage) power domain definitions.   |
+| `check_mv_design`          | Checks isolation, level shifters, and power intent consistency.         |
+
+### 🧪 Optional Checks (Recommended)
+
+| Check                       | Description                                                             |
+|----------------------------|-------------------------------------------------------------------------|
+| `report_floorplan`         | Gives detailed info on block shape, area, margins, and pin access.      |
+| `report_clock_domains`     | Ensures clock-related partitions are defined and reachable.             |
+| Visual inspection (GUI)    | Manual review of macro placement, congestion hotspots, and pin access. |
+
+
 # Powerplan
     inputs
     <div align="center">

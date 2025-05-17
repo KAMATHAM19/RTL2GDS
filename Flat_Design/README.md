@@ -53,6 +53,11 @@ endmodule
 
 ```
 
+
+# Simulation using VCS and Verdi
+
+- VCS - Functional Verification Compiler Suite tool
+
 ### Testbench
 
 Testbench - To verify the functionality of the design.
@@ -100,21 +105,16 @@ endmodule
 
 ```
 
-
-# Simulation using VCS and Verdi
-
-- VCS - Functional Verification Compiler Suite tool
-
 ```
 vcs -sverilog full_adder.v full_adder_tb.sv -full64 -lca -kdb -debug_access+all 
 
 ```
 ```bash
--sverilog              # Enable SystemVerilog
--full64                # 64-bit architecture
+-sverilog              # Enable SystemVerilog support
+-full64                # 64-bit architecture 
 -lca                   # Internal switches to VCS
--kdb                   # Kernel debugger
--debug_access+all      # Debug all the execution process
+-kdb                   # enables Kernel debugger
+-debug_access+all      # Allows full signal visibility in waveform viewers 
 ```
 
 <img width="959" alt="1" src="https://github.com/user-attachments/assets/18c5974a-182a-483e-a0eb-93bdfd004d0d" />
@@ -171,9 +171,6 @@ Coverage analysis is a general way to track how much of the design verification 
 
 - **Cross coverage**  
   Checking how different coverpoints or variables combine and happen together during simulation.
-
-## 2. SystemVerilog Methodology
-(Add your content here if needed.)
 
 - First example showing all possible combinations
 
@@ -239,6 +236,24 @@ endmodule
 ```
 vcs -sverilog full_adder.v full_adder_tb.sv -full64 -lca -kdb -debug_access+all -cmline+fsm+tgl+cond
 ./simv
+```
+```
+## Coverage Checks
+
+| Coverage Type | Description                                                         | Command Option |
+|---------------|---------------------------------------------------------------------|----------------|
+| **Line**      | Checks whether each line in the code was executed.                  | `-line`        |
+| **Toggle**    | Checks whether each bit of each register/wire toggled (0→1 or 1→0). | `-tgl`         |
+| **Condition** | Checks all boolean sub-expressions in IF/CASE/TERNARY conditions.  | `-cond`        |
+| **FSM**       | Checks all states and transitions if your design has FSMs.          | `-fsm`         |
+
+### Example Usage
+
+```bash
+-line   # Line coverage
+-fsm    # FSM coverage
+-tgl    # Toggle coverage
+-cond   # Condition coverage
 ```
 <img width="815" alt="cov" src="https://github.com/user-attachments/assets/2a9d329b-58c7-4d87-b7ac-514dc7de868c" />
 <br><br>

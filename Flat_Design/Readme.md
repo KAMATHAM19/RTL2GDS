@@ -652,6 +652,8 @@ compile_ultra
 | `compile`        | Standard synthesis (basic optimization)           | Simple designs or initial runs |
 | `compile_ultra`  | Aggressive synthesis (advanced optimizations)     | Final timing closure, PPA tuning |
 
+<br><br>
+
 ```tcl
 #Generate reports 
 report_area -hierarchy > ./reports/area.rpt
@@ -677,18 +679,17 @@ During synthesis, Design Compiler performs various optimizations to improve perf
   - Reusing hardware resources (e.g., adders, multipliers) to save area
 
 ### 📤 Outputs
-    <div align="center">
+<div align="center">
 <pre>
-+----------------------------+
-|         Outputs           |
-+----------------------------+
-| 1. Gate-level netlist (.v)               |
-| 2. mapped SDC constraints     |
-| 3. Reports - Area/Power/Timing    |
-+----------------------------+
++----------------------------------+
+|         Inputs                   |
++----------------------------------+
+| 1. Gate level netlist (.v)       |
+| 2. Mapped SDC constraints        |
+| 3. Reports - Area/Power/Timing   |
++----------------------------------+
 </pre>
 </div>
-    
 
 ### ✅ **Checks Performed**
 

@@ -1,4 +1,4 @@
-# [Register Transfer Level (RTL)](#1-register-transfer-level-rtl)
+# [Register Transfer Level (RTL)](#register-transfer-level-rtl)
 
 ## Register Transfer Level (RTL)
 
@@ -54,7 +54,7 @@ endmodule
 ```
 
 
-# Simulation using VCS and Verdi
+# [Simulation using VCS and Verdi](#simulation-using-vcs-and-verdi)
 
 - VCS - Functional Verification Compiler Suite tool
 
@@ -145,9 +145,9 @@ Schematic View of Design
 <img width="959" alt="verdi" src="https://github.com/user-attachments/assets/a1c04dc2-ec00-4075-a4d3-bc635d89edce" />
 <br><br>
 
-# Verification
+# [Verification](#verification)
 
-## 1. Coverage Analysis
+## 1. [Coverage Analysis](#1-coverage-analysis)
 Coverage analysis is a general way to track how much of the design verification is done. It includes:
 - `Code coverage` – How much of the HDL code has been tested.
 - `Functional coverage` – How much of the design’s expected behavior has been checked.
@@ -333,10 +333,10 @@ Verdi -cov -covdir simv.vdb
 <img width="950" alt="4" src="https://github.com/user-attachments/assets/c7b2a71b-5657-4905-9da5-b4702cbad332" />
 <br><br>
 
-2. SV Methodology
+2. [SV Methodology](#2-sv-methodology)
 
 	
-# Linting – Spyglass
+# [Linting – Spyglass](#linting--spyglass)
 
 **`Linting`** is the process of analyzing HDL code to detect potential errors, coding standard violations, and design issues early in the development cycle.
 
@@ -393,11 +393,11 @@ run_goal
 <img width="959" alt="7" src="https://github.com/user-attachments/assets/98b7d293-138d-4895-a7fb-667a3d5ed8ba" />
 <br><br>
 
-# Logic Synthesis
+# [Logic Synthesis](#logic-synthesis)
 
  `Logic synthesis` is the process of translating RTL code into an **`optimised gate-level netlist`** using a specific technology or logic library.
     
-## Logic Synthesis Inputs
+## [Inputs](#logic-synthesis-inputs)
 
 <div align="center">
 <pre>
@@ -415,7 +415,7 @@ run_goal
 </div>
 
     
-## 🔧 Logic Synthesis Process
+## 🔧 [Process](#logic-synthesis-process)
 
 1. **Create the RTL files**  
    Write the Verilog or SystemVerilog code for your design.

@@ -1,5 +1,6 @@
 # RTL2GDS
 
+## Contents
 ### [Flat Design](Flat_Design/README.md#flat-design)
 
 1. [Register Transfer Level (RTL)](Flat_Design/README.md#register-transfer-level-rtl)  
@@ -59,6 +60,22 @@
      - [Routing Optimizations](Flat_Design/README.md#routing-optimizations)  
      - [Outputs](Flat_Design/README.md#outputs)  
      - [Checks](Flat_Design/README.md#checks)  
+
+### [Hierarchical Design](Hierarchical_Design/README.md#hierarchical-design)
+1. [RTL](Hierarchical_Design/README.md##1-rtl)  
+2. [Simulation](Hierarchical_Design/README.md##2-simulation)  
+3. [Verification](Hierarchical_Design/README.md##3-verification)  
+4. [Linting](Hierarchical_Design/README.md##4-linting)  
+5. [Generation of `.lib` of 4-bit FA](Hierarchical_Design/README.md##5-generation-of-lib-of-4bit-fa)  
+6. [Generation of `.db` of 4-bit FA](Hierarchical_Design/README.md##6-generation-of-db-of-4bit-fa)  
+7. [Synthesis](Hierarchical_Design/README.md##7-synthesis)  
+8. [Formality Equivalence Checking](Hierarchical_Design/README.md##8-formality-equivalence-checking)  
+9. [Physical Design](Hierarchical_Design/README.md##9-physical-design)  
+   - [Floorplan](Hierarchical_Design/README.md##91-floorplan)  
+   - [Powerplan](Hierarchical_Design/README.md##92-powerplan)  
+   - [Placement](Hierarchical_Design/README.md##93-placement)  
+   - [Clock Tree Synthesis](Hierarchical_Design/README.md##94-clock-tree-synthesis)  
+   - [Routing](Hierarchical_Design/README.md##95-routing)  
 
 ## Tools
 

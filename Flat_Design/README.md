@@ -147,15 +147,15 @@ Schematic View of Design
 
 # [Verification](#verification)
 
-## 1. [Coverage Analysis](#1-coverage-analysis)
+### 1. [Coverage Analysis](#1-coverage-analysis)
 Coverage analysis is a general way to track how much of the design verification is done. It includes:
 - `Code coverage` – How much of the HDL code has been tested.
 - `Functional coverage` – How much of the design’s expected behavior has been checked.
 - `Assertion coverage` – How many assertions have been activated or verified.
 
-### Code Coverage Components
+#### Code Coverage Components
 
-## Coverage Terms
+### Coverage Terms
 
 - **Coverpoint**  
   A specific thing we watch or check in the testbench or input.
@@ -240,12 +240,12 @@ vcs -sverilog full_adder.v full_adder_tb.sv -full64 -lca -kdb -debug_access+all 
 ```
 ## Coverage Checks
 
-| Coverage Type | Description                                                         | Command Option |
-|---------------|---------------------------------------------------------------------|----------------|
-| **Line**      | Checks whether each line in the code was executed.                  | `-line`        |
-| **Toggle**    | Checks whether each bit of each register/wire toggled (0→1 or 1→0). | `-tgl`         |
-| **Condition** | Checks all boolean sub-expressions in IF/CASE/TERNARY conditions.  | `-cond`        |
-| **FSM**       | Checks all states and transitions if your design has FSMs.          | `-fsm`         |
+| Coverage Type | Description                                                         | Command Option  |
+|---------------|---------------------------------------------------------------------|---------------- |
+| **Line**      | Checks whether each line in the code was executed.                  |  `-line`        |
+| **Toggle**    | Checks whether each bit of each register/wire toggled (0→1 or 1→0). |  `-tgl`         |
+| **Condition** | Checks all boolean sub-expressions in IF/CASE/TERNARY conditions.   |  `-cond`        |
+| **FSM**       | Checks all states and transitions if your design has FSMs.          |  `-fsm`         |
 
 ### Example Usage
 
@@ -333,7 +333,7 @@ Verdi -cov -covdir simv.vdb
 <img width="950" alt="4" src="https://github.com/user-attachments/assets/c7b2a71b-5657-4905-9da5-b4702cbad332" />
 <br><br>
 
-2. [SV Methodology](#2-sv-methodology)
+### 2. [SV Methodology](#2-sv-methodology)
 
 	
 # [Linting – Spyglass](#linting--spyglass)
@@ -397,7 +397,7 @@ run_goal
 
  `Logic synthesis` is the process of translating RTL code into an **`optimised gate-level netlist`** using a specific technology or logic library.
     
-## [Inputs](#logic-synthesis-inputs)
+### [**Inputs**](#inputs)
 
 <div align="center">
 <pre>
@@ -415,7 +415,7 @@ run_goal
 </div>
 
     
-## 🔧 [Process](#logic-synthesis-process)
+### [**Process**](#process)
 
 1. **Create the RTL files**  
    Write the Verilog or SystemVerilog code for your design.
@@ -441,12 +441,11 @@ run_goal
 8. **Save the design database**  
    Write out the mapped netlist and final design state for further use.
 
-# 🧠 Logic Synthesis Scripts and Flow
+### [Scripts](#scripts)
 
 This section provides a detailed synthesis flow using Synopsys tools with SAED 32nm PDK.
 
-
-## 📁 Script Setup: `rm_setup/common_setup.tcl`
+#### `rm_setup/common_setup.tcl`
 
 ```tcl
 set DESIGN_NAME                   "full_adder"  ;# Top-level design name
@@ -466,12 +465,11 @@ set TLUPLUS_MIN_FILE              "saed32nm_1p9m_Cmin.tluplus"
 set MIN_ROUTING_LAYER             "M1"
 set MAX_ROUTING_LAYER             "M5"
 ```
-## 📁 Script Setup: `rm_setup/dc_setup.tcl`
+#### `rm_setup/dc_setup.tcl`
 ```tcl
 source -echo -verbose ./rm_setup/common_setup.tcl
 source -echo -verbose ./rm_setup/dc_setup_filenames.tcl
 ```
-## ▶️ Run script
 
 **The `link_library`** is the set of all libraries that Design Compiler uses to resolve references to cells and modules in the design hierarchy — including black-boxes, macros, DesignWare components, and the standard cells themselves.
 
@@ -498,7 +496,6 @@ source -echo -verbose ./rm_setup/dc_setup_filenames.tcl
 
 - It is **required** to analyze high-level constructs (like multipliers, adders, dividers) before they’re mapped to real gates in the `target_library`.
 
-
 ```
 # Set the PDK path
 set PDK_PATH /data/pdk/pdk32nm/SAED32_EDK/
@@ -515,7 +512,6 @@ echo $search_path
 ```
  <img width="958" alt="1" src="https://github.com/user-attachments/assets/90004d32-1d17-4430-b4a7-ff84405420d9" /> 
 <br><br>
-
 
 ```tcl
 # Source the full setup
@@ -681,7 +677,7 @@ report_timing  > ./reports/timing.rpt
 write -format verilog -hierarchy -output ${RESULTS_DIR}/${DCRM_FINAL_VERILOG_OUTPUT_FILE}
 write_sdc ./${RESULTS_DIR}/${DCRM_FINAL_SDC_OUTPUT_FILE}
 ```
-### 🔧 **Optimizations**
+### [**Optimizations**](#optimizations)
 
 During synthesis, Design Compiler performs various optimizations to improve performance, area, and power:
 
@@ -695,7 +691,7 @@ During synthesis, Design Compiler performs various optimizations to improve perf
 - **Resource Sharing**
   - Reusing hardware resources (e.g., adders, multipliers) to save area
 
-### 📤 Outputs
+### [**Outputs**](#outputs)
 <div align="center">
 <pre>
 +----------------------------------+
@@ -708,9 +704,7 @@ During synthesis, Design Compiler performs various optimizations to improve perf
 </pre>
 </div>
 
-### ✅ **Checks Performed**
-
-### ✅ Synthesis Checks
+### [**Checks**](#checks)
 
 To ensure correctness and meet design goals, several checks are carried out:
 
@@ -735,26 +729,21 @@ To ensure correctness and meet design goals, several checks are carried out:
    - `check_timing`: Validates timing constraints are correctly defined and met
 
 
-# Formality Equivalence Checking
+# [Formality Equivalence Checking](#formality-equivalence-checking)
 
-## 🔍 What is Equivalence Checking?
+## What is Equivalence Checking?
 
 Equivalence checking is a formal verification technique used to **mathematically prove** that two versions of a design (typically the **RTL** and the **synthesized netlist**) behave **identically**. Unlike simulation-based functional verification, equivalence checking doesn't require test vectors — making it **faster** and **more exhaustive**.
 
-
-
-## ✅ Why Use Equivalence Checking?
+### Why Use Equivalence Checking?
 
 - Verifies if a design remains functionally the same after:
   - **Synthesis**
   - **Engineering Change Orders (ECOs)**
   - **Optimization passes**
-
 - **Catches bugs** that simulation might miss due to limited input coverage.
 
-
-
-## ⚙️ How Does It Work?
+### How Does It Work?
 
 Equivalence checking generally follows three key steps:
 
@@ -767,34 +756,28 @@ Equivalence checking generally follows three key steps:
 3. **Compare**  
    ➤ Formally check if the mapped elements behave identically (or are logically equivalent/inverted).
 
-<img width="367" alt="fec" src="https://github.com/user-attachments/assets/371cdf8d-2b09-4f65-a6d5-ab3b69877bc4" />
+<div align="center"><img width="367" alt="fec" src="https://github.com/user-attachments/assets/371cdf8d-2b09-4f65-a6d5-ab3b69877bc4" /></div>
 
 
-## 🚀 Why Is It Important?
+### Why Is It Important?
 
 Modern chip development involves many tools and transformation steps. These can introduce **unintended changes** to design behavior. Simulation alone can miss these.
 
 Equivalence checking provides:
+- Confidence that synthesis or optimization did not alter functionality  
+- Safety against overlooked bugs  
+- Improved design quality and verification coverage
 
-- ✅ Confidence that synthesis or optimization did not alter functionality  
-- 🔒 Safety against overlooked bugs  
-- 📈 Improved design quality and verification coverage
+### Benefits
 
+- **Faster** than exhaustive simulation  
+- **Mathematically complete** (covers all cases)  
+- **Finds hidden mismatches** in logic or structure  
+- **Improves reliability** before tape-out
 
-
-## 💡 Benefits
-
-- ⚡ **Faster** than exhaustive simulation  
-- 🧠 **Mathematically complete** (covers all cases)  
-- 🧩 **Finds hidden mismatches** in logic or structure  
-- 📦 **Improves reliability** before tape-out
-
-
-
-## 🔗 Reference
+### Reference
 
 [Synopsys: What is Equivalence Checking?](https://www.synopsys.com/glossary/what-is-equivalence-checking.html)
-
 
 ### Input Files 
  
@@ -851,13 +834,13 @@ verify
 ```
 6. Debug
    
-# Physical Design 
+# [Physical Design](#physical-design)
 
-## 🧱 What is Physical Design?
+## What is Physical Design?
 
 **Physical Design** is the process of turning a digital design (like Verilog code) into a physical layout that can be manufactured.
 
-### 🛠️ Main Steps in Physical Design:
+### Main Steps in Physical Design:
 1. **Floorplanning** – Decide where each block goes on the chip.
 2. **Power Planning** – Add power and ground lines to ensure all parts get power.
 3. **Placement** – Place all logic cells in the right positions.
@@ -866,10 +849,10 @@ verify
 6. **Timing and Power Analysis** – Check that the chip is fast and power-efficient.
 7. **DRC (Design Rule Check)** – Make sure the layout follows manufacturing rules.
 
-### 🎯 Goal:
+### Goal:
 To create a chip layout that works correctly, uses power efficiently, and is ready for manufacturing.
 
-## 1. Import Design / Netlist
+## 1. [Import Design / Netlist](#import-design--netlist)
 
 The first step in the physical design flow involves loading all necessary files into the tool and performing initial checks to ensure everything is correctly set up.
 
@@ -882,7 +865,7 @@ The first step in the physical design flow involves loading all necessary files 
 - **IP blocks** used in the design  
 - **Floorplan files** (DEF)  
 - **Technology file**  
-- **RC data** (resistance/capacitance info)  
+- **TLUPLUS** (resistance/capacitance info)  
 
 ### Checks After Import
 
@@ -895,8 +878,6 @@ The first step in the physical design flow involves loading all necessary files 
 ### Why Timing Checks Are Important
 
 Timing results may differ between synthesis and physical tools (like ICC or Innovus) due to tool differences or constraint mismatches. Early timing checks help avoid surprises later and ensure a smoother design flow.
-
----
 
 ### TCL Script for ICC2 Physical Implementation
 
@@ -924,15 +905,15 @@ check_design -checks dp_pre_floorplan
 
 ```
 
-# Floorplan 
+# [Floorplan](#floorplan) 
 
 The **Floorplan** is the initial and crucial step in physical design. It defines the rough layout of the chip, including block shape, core area, pin placements, power domains, and macro positions — laying the foundation for the rest of the PnR (Place and Route) flow.
 
-## 🎯 Objective
+### [**Objectives**](#objectives)
 
 Choose the right shape and place all standard cells, macros, and IOs efficiently inside the **core area** to meet timing, area, and power goals.
 
-## 📥 Inputs
+### [**Inputs**](#inputs)
 
 <div align="center">
 <pre>
@@ -948,7 +929,7 @@ Choose the right shape and place all standard cells, macros, and IOs efficiently
 </pre>
 </div>
 
-## ⚙️ Floorplanning Steps
+### [**Floorplanning Steps**](#floorplanning-steps)
 
 1. **Define Core Size & Shape** (based on utilization)
 2. **Create Voltage Areas** (for multi-voltage designs)
@@ -957,10 +938,9 @@ Choose the right shape and place all standard cells, macros, and IOs efficiently
 5. **Macro Placement** (for SRAMs, ROMs, etc.)
 6. **Add Blockages** (optional, to guide placement and routing)
 
-## 🔢 Area Estimation Formula
+#### **Area Estimation Formula**
 
 Core Area = Standard Cell Area / Core Utilization
-
 
 For a square floorplan, use:
 
@@ -989,7 +969,7 @@ set_individual_pin_constraints -sides 3 \
 place_pins -ports [all_outputs]
 ```
 
-   ## ⚡ Floorplan Optimizations
+### [**Floorplan Optimizations**](#floorplan-optimizations)
 
 Effective floorplanning sets the stage for meeting timing, area, and power goals. Below are key optimization strategies used during the floorplanning stage:
 
@@ -1005,7 +985,7 @@ Effective floorplanning sets the stage for meeting timing, area, and power goals
 - **Timing-Aware Planning**  
   Place high-speed and critical-path logic close together to reduce delay. Keep clocked elements and key data paths short and direct for better performance.
 
-> 💡 Good floorplan decisions early on greatly reduce design iterations and help achieve closure faster.
+### [**Outputs**](#outputs)
 
 <div align="center">
 <pre>
@@ -1020,79 +1000,68 @@ Effective floorplanning sets the stage for meeting timing, area, and power goals
 </pre>
 </div>
 
- ## ✅ Checks After Floorplan
+ ### [**Checks**](#checks)
 
 After completing the floorplan stage, several essential checks are performed to ensure the design is legal, efficient, and ready for placement.
 
 ### 🔍 Checks
 
-| Check Command               | Purpose                                                                 |
+| Check Command              | Purpose                                                                 |
 |----------------------------|-------------------------------------------------------------------------|
-| `check_legality`           | Ensures cells/macros follow legal placement rules (no overlaps, gaps). |
+| `check_legality`           | Ensures cells/macros follow legal placement rules (no overlaps, gaps).  |
 | `check_pin_placement`      | Verifies that input/output pins are correctly placed and constrained.   |
 | `check_floorplan`          | Checks for unplaced macros, missing core rows, and blockages.           |
 | `report_utilization`       | Summarizes cell area, core area, and utilization.                       |
 | `report_area`              | Reports area breakdown for logic, macros, etc.                          |
 | `check_power_domains`      | Validates correctness of MV (multi-voltage) power domain definitions.   |
 | `check_mv_design`          | Checks isolation, level shifters, and power intent consistency.         |
-
-### 🧪 Optional Checks (Recommended)
-
-| Check                       | Description                                                             |
-|----------------------------|-------------------------------------------------------------------------|
 | `report_floorplan`         | Gives detailed info on block shape, area, margins, and pin access.      |
 | `report_clock_domains`     | Ensures clock-related partitions are defined and reachable.             |
-| Visual inspection (GUI)    | Manual review of macro placement, congestion hotspots, and pin access. |
+| Visual inspection (GUI)    | Manual review of macro placement, congestion hotspots, and pin access.  |
 
 
-#  Power Plan
+#  [Powerplan](#powerplan)
 
-Power planning is a **pre-routing** step in the physical design flow. It ensures a stable and reliable power supply across the chip by building a **Power Delivery Network (PDN).**
+**Power planning** is a **pre-routing** step in the physical design flow. It ensures a stable and reliable power supply across the chip by building a **Power Delivery Network (PDN).**
 
-
-### 🎯 Objectives
+### [**Objectives**](#objectives)
 
 1. **Uniform power distribution** – All cells in the design should get the right amount of power.
 2. **Minimize IR drop** – Reduce voltage loss across the chip.
 3. **Prevent electromigration** – Avoid metal damage due to high current density.
 4. **Ensure reliability** – Ensure the IC functions safely and efficiently under all conditions.
 
----
-
-## 📥 Inputs
+### [**Inputs**](#inputs)
 
 <div align="center">
 <pre>
-+----------------------------+
-|         Inputs            |
-+----------------------------+
-| 1. Floorplan Database (.def) |
-| 2. Powerplan Scripts (.tcl) |
-+----------------------------+
++-------------------------------+
+|         Inputs                |
++-------------------------------+
+| 1. Floorplan Database (.def)  |
+| 2. Powerplan Scripts (.tcl)   |
++-------------------------------+
 </pre>
 </div>
 
+### [**Powerplanning Steps**](#powerplanning-steps)
 
-## 🛠️ Process
-
-### 1. Create Core Power Rings  
+#### 1. Create Core Power Rings  
 **Purpose:** Distribute power (VDD/VSS) from the chip’s I/O pads around the core area.  
 **Description:** Wide metal loops (usually on top layers like M7 or M8) that surround the core.  
 **Function:** Acts as the main conduit for power entering the core.
 
-
-### 🔌 2. Create Power Mesh / Straps / Stripes  
+#### 2. Create Power Mesh / Straps / Stripes  
 **Purpose:** Deliver power deeper into the core from the power rings.  
 **Description:** A grid-like network of vertical and horizontal metal lines (called stripes or straps) spanning the core.  
 **Function:** Ensures even and robust power delivery across the entire block.
 
-
-### 🧱 3. Create Standard Cell Rails  
+#### 3. Create Standard Cell Rails  
 **Purpose:** Provide direct power to the standard cells (logic gates, flip-flops, etc.).  
 **Description:** Thin metal rails (usually on lower layers like M1 or M2) inside each standard cell row.  
 **Function:** Connects to the power mesh above via vias, supplying VDD and VSS locally to each cell.
 
-## 📜 Script 
+### [**Script**}(#script) 
 
 ```tcl
 # Clean previous PG strategies and routes
@@ -1142,46 +1111,46 @@ report_power_domains
 analyze_power_plan -nets {VDD VSS} -power_budget 1000
 analyze_power_plan -report_track_utilization_only
 ```
-## Powerplan Optimizations
+### [**Powerplan Optimizations**](#powerplan-optimizations)
 
 - Minimize IR drop by adjusting stripe width, pitch, and metal layer usage.
 - Balance power distribution across metal layers.
 - Place macros close to critical blocks to ensure they get clean and stable power.
 
-## Outputs
+### [**Outputs**](#outputs)
+
 <div align="center">
 <pre>
 +-----------------------------------------+
 |               Outputs                   |
 +-----------------------------------------+
-| 1. Powerplan Database (.def or .fp)    |
-| 2. PG Connectivity Reports (.rpt)      |
+| 1. Powerplan Database (.def)            |
+| 2. PG Connectivity Reports (.rpt)       |
 | 3. Power Analysis Reports               |
 +-----------------------------------------+
 </pre>
 </div>
 
-## Checks 
+### [**Checks**](#checks) 
 
 | Check                  | Purpose                                               |
-|------------------------|------------------------------------------------------|
-| `check_pg_drcs`        | Ensure PG-related DRCs are not violated              |
-| `check_pg_connectivity`| Confirm VDD/VSS nets are fully connected to all cells|
-| `check_pg_missing_vias`| Identify any missing vias in power/ground connections|
+|------------------------|------------------------------------------------------ |
+| `check_pg_drcs`        | Ensure PG-related DRCs are not violated               |
+| `check_pg_connectivity`| Confirm VDD/VSS nets are fully connected to all cells |
+| `check_pg_missing_vias`| Identify any missing vias in power/ground connections |
 
-# Placement
+# [Placement](#placement)
 
 **Placement** is the process of assigning physical locations to all the standard cells inside a chip’s core area.
 
-
-## 🎯 Objectives
+### [**Objectives**](#objectives)
 
 - Place all cells inside the core without overlaps
 - Optimize timing (WNS/TNS), power, and area
 - Minimize wirelength and congestion
 - Ensure legality and design rule compliance
 
-## 📥 Inputs
+### [**Inputs**](#inputs)
 
 <div align="center">
 <pre>
@@ -1199,7 +1168,7 @@ analyze_power_plan -report_track_utilization_only
 </pre>
 </div>
 
-## ⚙️ Placement Process
+### [**Placement Steps**](#placement-steps)
 
 1. **Pre-Placement Checks**
    - No floating nets or cells
@@ -1225,7 +1194,7 @@ analyze_power_plan -report_track_utilization_only
 6. **Final Optimization**
    - Focus on optimizing for power, area, and final timing closure
 
-## 📜 Script 
+### [**Script**](#script) 
 
 ```tcl
 set PDK_PATH /data/pdk/pdk32nm/SAED32_EDK/
@@ -1275,7 +1244,7 @@ report_timing
 report_global_timing
 ```
 
-## 🚀 Optimizations
+### [**Placement Optimizations**](#placement-optimizations)
 
 - **Timing-Driven Placement**  
   Improve setup/hold slack by adjusting cell locations based on timing analysis.
@@ -1286,7 +1255,7 @@ report_global_timing
 - **Power-Aware Placement**  
   Minimize dynamic power by shortening high-activity nets and strategically placing power-hungry cells.
 
-## 📤 Outputs
+### [**Outputs**](#outputs)
 
 <div align="center">
 <pre>
@@ -1300,8 +1269,9 @@ report_global_timing
 +-------------------------------+
 </pre>
 </div>
+<br><br>
 
-## ✅ Checks After Placement
+### [**Checks**](#checks)
 
 | Check Command             | Purpose                                           |
 |---------------------------|---------------------------------------------------|
@@ -1313,20 +1283,19 @@ report_global_timing
 
 
     
-# Clock Tree Synthesis (CTS)
+# [Clock Tree Synthesis (CTS)](#clock-tree-synthesis-cts)
 
-Clock Tree Synthesis (CTS) is the process of building and optimizing the clock network in a chip. It distributes the clock signal from the source (like a PLL or clock port) to all sequential elements (flip-flops, latches) with minimal **skew** and controlled **insertion delay**.
+**Clock Tree Synthesis (CTS)** is the process of building and optimizing the clock network in a chip. It distributes the clock signal from the source (like a PLL or clock port) to all sequential elements (flip-flops, latches) with minimal **skew** and controlled **insertion delay**.
 
 
-## 🎯 Objectives
+### [**Objectives**](#objectives)
 
 - Distribute the clock signal efficiently across the chip.
 - Minimize **clock skew** (difference in clock arrival times).
 - Control **insertion delay** (delay from source to sinks).
 - Balance setup and hold timing paths.
 
-
-## 📥 Inputs
+### [**Inputs**](#inputs)
 
 <div align="center">
 <pre>
@@ -1343,9 +1312,7 @@ Clock Tree Synthesis (CTS) is the process of building and optimizing the clock n
 </pre>
 </div>
 
-
-
-## ⚙️ Process
+### [**CTS Steps**](#cts-steps)
 
 ### 1. Classic CTS Flow
 - Clock tree is built **independent** of data path.
@@ -1359,7 +1326,7 @@ Clock Tree Synthesis (CTS) is the process of building and optimizing the clock n
 - Clock and data paths are co-optimized in iterations.
 
 
-## 📜Script
+### [**Script**](#script)
 
 ```tcl
 check_design -checks pre_clock_tree_stage
@@ -1377,7 +1344,7 @@ set_clock_tree_options -target_latency 0.3 -target_skew 0.02 -corner $corner1
 # Run clock optimization
 clock_opt
 ```
-## 🚀 Optimizations
+### [**CTS Optimizations**](#cts-optimizations)
 
 - **Skew Balancing**  
   Equalize the arrival time of the clock signal to all flip-flops and latches to avoid timing violations.
@@ -1388,7 +1355,7 @@ clock_opt
 - **Buffer/Repeater Insertion**  
   Insert buffers or inverters to strengthen the clock signal, meet transition constraints, and drive long-distance nets effectively.
 
-## 🧾 Outputs
+### [**Outputs**](#outputs)
 
 <div align="center">
 <pre>
@@ -1403,7 +1370,7 @@ clock_opt
 </pre>
 </div>
 
-## ✅ Checks 
+### [**Checks**](#checks) 
 
 | **Check Command**                 | **Purpose**                                                   |
 |----------------------------------|----------------------------------------------------------------|
@@ -1415,18 +1382,18 @@ clock_opt
 
 
 
-# Routing
+# [Routing](#routing)
 
 **Routing** is the process of creating physical metal connections between all cells and components in the design, while following foundry-specific design rules.
 
-## 🎯 Objectives
+### [**Objectives**](#objectives)
 
 - Perform pre-routing checks and setup
 - Route signal nets efficiently
 - Optimize routed design for performance and area
 - Fix DRC (Design Rule Check) violations after routing
 
-## 📥 Inputs
+### [**Inputs**](#inputs)
 
 <div align="center">
 <pre>
@@ -1443,7 +1410,7 @@ clock_opt
 </pre>
 </div>
 
-## 🔄 Process
+### [**Routing Steps**](#routing-steps)
 
 1. **Clock Nets Routed Already**  
    Clock nets are typically routed during CTS.
@@ -1455,7 +1422,7 @@ clock_opt
    Improves timing, area, and fixes any violations.
 
 
-## 📜 Script
+### [**Script**](#script)
 
 ```tcl
 check_design -checks pre_route_stage
@@ -1496,7 +1463,7 @@ create_frame ./data/eight_bit_full_adder.frame
 write_lef -design eight_bit_full_adder ./data/eight_bit_full_adder.lef
 
 ```
-## 🚀 Optimizations
+### [**Routing Optimizations**](#routing-optimizations)
 
 - **Reduce Coupling Capacitance:**  
   Lower interference between nearby wires to avoid crosstalk and signal integrity issues.
@@ -1516,32 +1483,32 @@ write_lef -design eight_bit_full_adder ./data/eight_bit_full_adder.lef
 - **Compact Routing to Save Area:**  
   Efficiently utilize routing resources to reduce overall chip area and improve yield.
 
-## 🧾 Outputs
+### [**Outputs**](#outputs)
 
   <div align="center">
 <pre>
-+-------------------------------------------+
-|                  Outputs                  |
-+-------------------------------------------+
-| 1. Final Routed Design (DEF/GDSII)        |
-| 2. Parasitic Extraction File (SPEF)       |
-| 3. Final Timing Reports                    |
-| 4. Congestion Maps                         |
-| 5. LVS-Ready Netlist                       |
-+-------------------------------------------+
++----------------------------------------------+
+|                  Outputs                     |
++----------------------------------------------+
+|  1. Final Routed Design (DEF/GDSII)          |
+|  2. Parasitic Extraction File (SPEF)         |
+|  3. Final Timing Reports                     |
+|  4. Congestion Maps                          |
+|  5. LVS-Ready Netlist                        |
++----------------------------------------------+
 </pre>
 </div>
 
-## Checks 
+### [**Checks**](#checks) 
 
-| Check            | Purpose                                        |
-|------------------|------------------------------------------------|
+| Check               | Purpose                                        |
+|---------------------|------------------------------------------------|
 | `check_routability` | Verifies that all nets can be routed cleanly   |
 | `check_lvs`         | Ensures layout vs schematic consistency        |
-| `check_routes`      | Detects any open or short connections           |
+| `check_routes`      | Detects any open or short connections          |
 | `report_timing`     | Validates that timing requirements are met     |
-| `report_congestion` | Highlights congested areas in the design        |
-| `report_drc`        | Ensures no DRCs exist in final routed layout    |
+| `report_congestion` | Highlights congested areas in the design       |
+| `report_drc`        | Ensures no DRCs exist in final routed layout   |
 
 
 

@@ -58,7 +58,7 @@ endmodule
 
 - VCS - Functional Verification Compiler Suite tool
 
-### Testbench
+### [Testbench](#testbench)
 
 Testbench - To verify the functionality of the design.
 
@@ -397,7 +397,7 @@ run_goal
 
  `Logic synthesis` is the process of translating RTL code into an **`optimised gate-level netlist`** using a specific technology or logic library.
     
-### [**Inputs**](#logic-synthesis-inputs)
+### [Inputs](#logic-synthesis-inputs)
 
 <div align="center">
 <pre>
@@ -415,7 +415,7 @@ run_goal
 </div>
 
     
-### [**Process**](#logic-synthesis-process)
+### [Process](#logic-synthesis-process)
 
 1. **Create the RTL files**  
    Write the Verilog or SystemVerilog code for your design.
@@ -441,7 +441,7 @@ run_goal
 8. **Save the design database**  
    Write out the mapped netlist and final design state for further use.
 
-### [Scripts](#logic-synthesis-scripts)  
+### [Scripts](#logic-synthesis-scripts)
 
 This section provides a detailed synthesis flow using Synopsys tools with SAED 32nm PDK.
 
@@ -677,7 +677,7 @@ report_timing  > ./reports/timing.rpt
 write -format verilog -hierarchy -output ${RESULTS_DIR}/${DCRM_FINAL_VERILOG_OUTPUT_FILE}
 write_sdc ./${RESULTS_DIR}/${DCRM_FINAL_SDC_OUTPUT_FILE}
 ```
-### [**Optimizations**](#logic-synthesis-optimizations)
+### [Optimizations](#logic-synthesis-optimizations)
 
 During synthesis, Design Compiler performs various optimizations to improve performance, area, and power:
 
@@ -691,7 +691,7 @@ During synthesis, Design Compiler performs various optimizations to improve perf
 - **Resource Sharing**
   - Reusing hardware resources (e.g., adders, multipliers) to save area
 
-### [**Outputs**](#logic-synthesis-outputs)
+### [Outputs](#logic-synthesis-outputs)
 <div align="center">
 <pre>
 +----------------------------------+
@@ -704,7 +704,7 @@ During synthesis, Design Compiler performs various optimizations to improve perf
 </pre>
 </div>
 
-### [**Checks**](#logic-synthesis-checks)
+### [Checks](#logic-synthesis-checks)
 
 To ensure correctness and meet design goals, several checks are carried out:
 

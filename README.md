@@ -8,7 +8,7 @@
 3. [Verification](Flat_Design/README.md#verification)  
    - [Coverage Analysis](Flat_Design/README.md#coverage-analysis)  
    - [SV Methodology](Flat_Design/README.md#sv-methodology)  
-4. [Linting – Spyglass](Flat_Design/README.md#linting--spyglass)  
+4. [Linting](Flat_Design/README.md#linting)  
 5. [Logic Synthesis](Flat_Design/README.md#logic-synthesis)  
    - [Inputs](Flat_Design/README.md#logic-synthesis-inputs)  
    - [Process](Flat_Design/README.md#logic-synthesis-process)  

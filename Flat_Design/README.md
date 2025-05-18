@@ -147,7 +147,7 @@ Schematic View of Design
 
 # [Verification](#verification)
 
-### 1. [Coverage Analysis](#1-coverage-analysis)
+### [Coverage Analysis](#coverage-analysis)
 Coverage analysis is a general way to track how much of the design verification is done. It includes:
 - `Code coverage` – How much of the HDL code has been tested.
 - `Functional coverage` – How much of the design’s expected behavior has been checked.
@@ -333,10 +333,10 @@ Verdi -cov -covdir simv.vdb
 <img width="950" alt="4" src="https://github.com/user-attachments/assets/c7b2a71b-5657-4905-9da5-b4702cbad332" />
 <br><br>
 
-### 2. [SV Methodology](#2-sv-methodology)
+### [SV Methodology](#sv-methodology)
 
 	
-# [Linting – Spyglass](#linting--spyglass)
+# [Linting Spyglass](#linting-spyglass)
 
 **`Linting`** is the process of analyzing HDL code to detect potential errors, coding standard violations, and design issues early in the development cycle.
 

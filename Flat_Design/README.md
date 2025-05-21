@@ -611,7 +611,7 @@ set_max_transition -clock_path 0.1 [get_clocks Clock]
 read_sdc -echo ./../Constraints/full_adder.sdc
 ```
 
-| Pre-Setup Image | Pre-Hold Image |
+| Pre-Setup       | Pre-Hold        |
 |-----------------|----------------|
 | <img width="350" src="https://github.com/user-attachments/assets/30a36868-c741-4355-979e-85b8316f2d2d" /> | <img width="350" src="https://github.com/user-attachments/assets/058b6869-0a9c-4109-814e-d5c41cd488d6" /> | <br><br>
 
@@ -628,13 +628,9 @@ compile
 ```
 <div align="center"> <img width="526" alt="compile" src="https://github.com/user-attachments/assets/e213353c-6f70-4bb0-a05a-72b4599b1cfa" /></div> <br><br>
 
-<table>
-  <tr>
-    <td><img width="371" alt="setup" src="https://github.com/user-attachments/assets/b3e6d221-e336-4067-84e5-6c17c0102619" /></td>
-    <td><img width="373" alt="hold" src="https://github.com/user-attachments/assets/aaf63465-15ef-4061-8393-f516aa3b263d" /></td>
-  </tr>
-</table>
-<br><br>
+| Post-Setup       | Post-Hold     |
+|-----------------|----------------|
+| <img width="371" alt="setup" src="https://github.com/user-attachments/assets/b3e6d221-e336-4067-84e5-6c17c0102619" /> | <img width="373" alt="hold" src="https://github.com/user-attachments/assets/aaf63465-15ef-4061-8393-f516aa3b263d" /> | <br><br>
 
 The **`compile_ultra`** :
 - Builds on `compile`, but uses **more aggressive optimizations** and **advanced algorithms**.
@@ -652,13 +648,9 @@ compile_ultra
 ```
 <div align="center"><img width="898" alt="10" src="https://github.com/user-attachments/assets/38ea5642-d30e-43ff-a279-1ec2f788f7a3" /></div>
 
-<table>
-  <tr>
-    <td><img width="320" alt="11" src="https://github.com/user-attachments/assets/00210e7d-893e-41be-8382-3586e7a50094" /></td>
-    <td><img width="344" alt="12" src="https://github.com/user-attachments/assets/b7b2e0c0-175b-4bb5-a5ab-f63ce0d2ff3e" /></td>
-  </tr>
-</table>
-<br><br>
+| Post-Setup       | Post-Hold     |
+|-----------------|----------------|
+| <img width="320" alt="11" src="https://github.com/user-attachments/assets/00210e7d-893e-41be-8382-3586e7a50094" /> | <img width="344" alt="12" src="https://github.com/user-attachments/assets/b7b2e0c0-175b-4bb5-a5ab-f63ce0d2ff3e" /> | <br><br>
 
 | Command         | Description                                       | Use Case                       |
 |------------------|---------------------------------------------------|--------------------------------|
@@ -894,27 +886,46 @@ create_lib -ref_libs $PDK_PATH/lib/stdcell_rvt/ndm/saed32rvt_c.ndm final
 
 # Read the synthesized gate-level netlist into the final library and specify the top module
 read_verilog {./../DC/results/full_adder.mapped.v} -library final -design full_adder -top full_adder
-
-# Link the design blocks
-link_block
-
-# Run netlist checks for errors and warnings
-check_netlist
-
-# Run pre-floorplan design checks
-check_design -checks dp_pre_floorplan
+````
+<img width="896" alt="0" src="https://github.com/user-attachments/assets/94b22a64-6639-41f4-bd98-7cc4e82cd659" />
 
 ```
+# Link the design blocks
+link_block
+```
+<p align="center">
+<img width="529" alt="0 1" src="https://github.com/user-attachments/assets/829d38f3-58b1-4201-9d2c-ccac6044a91d" />
+</p>
+<p align="center">
+<img width="674" alt="1" src="https://github.com/user-attachments/assets/60071abd-bdda-40d1-960e-b2d690dc09bd" />
+</p>
+
+```
+# Run netlist checks for errors and warnings
+check_netlist
+```
+<p align="center">
+<img width="322" alt="3" src="https://github.com/user-attachments/assets/738c6e79-d49c-473b-9896-70c200ac276b" />
+</p>
+
+```
+# Run pre-floorplan design checks
+check_design -checks dp_pre_floorplan
+```
+<p align="center">
+  <img width="787" alt="4" src="https://github.com/user-attachments/assets/14ce4a85-9572-41f2-baa7-8a55d5a40b08" />
+</p>
+
 
 # [Floorplan](#floorplan) 
 
 The **Floorplan** is the initial and crucial step in physical design. It defines the rough layout of the chip, including block shape, core area, pin placements, power domains, and macro positions — laying the foundation for the rest of the PnR (Place and Route) flow.
 
-### [**Objectives**](#objectives)
+### [Objectives](#objectives)
 
 Choose the right shape and place all standard cells, macros, and IOs efficiently inside the **core area** to meet timing, area, and power goals.
 
-### [**Inputs**](#inputs)
+### [Inputs](#inputs)
 
 <div align="center">
 <pre>
@@ -946,31 +957,30 @@ Core Area = Standard Cell Area / Core Utilization
 For a square floorplan, use:
 
 ```tcl
-initialize_floorplan \
-  -core_utilization 0.65 \
-  -side_ratio {20 20} \
-  -core_offset {3}
+initialize_floorplan -core_utilization 0.65 -side_ratio {19.95 19.95} -core_offset {3}
 ```
+<p align="center">
+  <img width="283" alt="1 1" src="https://github.com/user-attachments/assets/af30460c-1642-46da-bf4a-ea1b100e9020" />
+  <img width="409" alt="2" src="https://github.com/user-attachments/assets/e67f9fae-5b1e-4fa9-b639-dc3194f107a1" />
+</p>
+
 Ports Placement 
 ```
 # Pin Constraints
-set_individual_pin_constraints -sides 1 \
-  -ports [remove_from_collection [all_inputs] "Clock C_in"] \
-  -pin_spacing 5
+set_individual_pin_constraints -sides 1  -ports [remove_from_collection [all_inputs] "Clock C_in"] -pin_spacing 5
 place_pins -ports [all_inputs]
-
-set_individual_pin_constraints -sides 2 \
-  -ports [get_ports "Clock C_in"] \
-  -pin_spacing 5
+set_individual_pin_constraints -sides 2  -ports [get_ports "C_in"] -pin_spacing 5
 place_pins -ports {Clock C_in}
-
-set_individual_pin_constraints -sides 3 \
-  -ports [all_outputs] \
-  -pin_spacing 5
+set_individual_pin_constraints -sides 4  -ports [get_ports "Clock"] -pin_spacing 5
+place_pins -ports {Clock C_in}
+set_individual_pin_constraints -sides {3} -ports [all_outputs] -pin_spacing 5
 place_pins -ports [all_outputs]
 ```
+<p align="center">
+<img width="404" alt="3" src="https://github.com/user-attachments/assets/33e72d1d-e379-406f-90d8-e330416643f3" />
+</p>
 
-### [**Floorplan Optimizations**](#floorplan-optimizations)
+### [Floorplan Optimizations](#floorplan-optimizations)
 
 Effective floorplanning sets the stage for meeting timing, area, and power goals. Below are key optimization strategies used during the floorplanning stage:
 
@@ -986,7 +996,7 @@ Effective floorplanning sets the stage for meeting timing, area, and power goals
 - **Timing-Aware Planning**  
   Place high-speed and critical-path logic close together to reduce delay. Keep clocked elements and key data paths short and direct for better performance.
 
-### [**Outputs**](#outputs)
+### [Outputs](#outputs)
 
 <div align="center">
 <pre>
@@ -996,16 +1006,16 @@ Effective floorplanning sets the stage for meeting timing, area, and power goals
 | 1. Floorplan Database (.def)            |
 | 2. Pin Placement Report (.rpt)          |
 | 3. Area and Utilization Report          |
-| 4. Updated Design Library (.ddc)        |
+| 4. Updated Design Library               |
 +-----------------------------------------+
 </pre>
 </div>
 
- ### [**Checks**](#checks)
+ ### [Checks](#checks)
 
 After completing the floorplan stage, several essential checks are performed to ensure the design is legal, efficient, and ready for placement.
 
-### 🔍 Checks
+### Checks
 
 | Check Command              | Purpose                                                                 |
 |----------------------------|-------------------------------------------------------------------------|
@@ -1025,14 +1035,14 @@ After completing the floorplan stage, several essential checks are performed to 
 
 **Power planning** is a **pre-routing** step in the physical design flow. It ensures a stable and reliable power supply across the chip by building a **Power Delivery Network (PDN).**
 
-### [**Objectives**](#objectives)
+### [Objectives](#objectives)
 
 1. **Uniform power distribution** – All cells in the design should get the right amount of power.
 2. **Minimize IR drop** – Reduce voltage loss across the chip.
 3. **Prevent electromigration** – Avoid metal damage due to high current density.
 4. **Ensure reliability** – Ensure the IC functions safely and efficiently under all conditions.
 
-### [**Inputs**](#inputs)
+### [Inputs](#inputs)
 
 <div align="center">
 <pre>
@@ -1045,24 +1055,35 @@ After completing the floorplan stage, several essential checks are performed to 
 </pre>
 </div>
 
-### [**Powerplanning Steps**](#powerplanning-steps)
+### [Powerplanning Steps](#powerplanning-steps)
 
 #### 1. Create Core Power Rings  
-**Purpose:** Distribute power (VDD/VSS) from the chip’s I/O pads around the core area.  
-**Description:** Wide metal loops (usually on top layers like M7 or M8) that surround the core.  
-**Function:** Acts as the main conduit for power entering the core.
+**Purpose:** Carry power (VDD/VSS) from the chip's I/O pads around the core.  
+**Structure:** Wide metal loops, typically on top layers (e.g., M8, M9), that enclose the core area.  
+**Function:** Act as the main entry point for power into the core.
 
 #### 2. Create Power Mesh / Straps / Stripes  
-**Purpose:** Deliver power deeper into the core from the power rings.  
-**Description:** A grid-like network of vertical and horizontal metal lines (called stripes or straps) spanning the core.  
-**Function:** Ensures even and robust power delivery across the entire block.
+**Purpose:** Distribute power from the rings evenly across the core.  
+**Description:** A grid of vertical and horizontal metal lines (e.g., on M6 and M7).  
+**Function:** Ensures stable and uniform power delivery throughout the block.
 
 #### 3. Create Standard Cell Rails  
 **Purpose:** Provide direct power to the standard cells (logic gates, flip-flops, etc.).  
-**Description:** Thin metal rails (usually on lower layers like M1 or M2) inside each standard cell row.  
-**Function:** Connects to the power mesh above via vias, supplying VDD and VSS locally to each cell.
+**Description:** Narrow VDD/VSS rails, usually on lower layers (like M1 or M2).  
+**Function:** Connect to the power mesh above via vias to supply power to logic cells.
 
-### [**Script**}(#script) 
+<table align="center">
+  <tr>
+    <td align="center" style="padding: 10px;">
+      <img width="250" alt="6" src="https://github.com/user-attachments/assets/831f71aa-5f41-4440-8c89-4a59df010be2" />
+    </td>
+    <td align="center" style="padding: 10px;">
+      <img width="292" alt="7" src="https://github.com/user-attachments/assets/33f12633-7f30-4129-b0f5-2ad05fc70779" />
+    </td>
+  </tr>
+</table>
+
+### [Script](#script) 
 
 ```tcl
 # Clean previous PG strategies and routes
@@ -1079,46 +1100,98 @@ create_port -direction in VSS
 create_net -power VDD
 create_net -ground VSS
 connect_pg_net -pg -design full_adder -automatic -all_blocks
+```
+<div align="center">
+<img width="638" alt="4" src="https://github.com/user-attachments/assets/d21a93c7-f103-4881-8e98-3a6f79e9f3d6" />
+</div>
 
+```
+create_shape -shape_type rect -layer M7 -boundary {{0.000 8.759} {1.991 9.242}} -port VDD
+create_shape -shape_type rect -layer M7 -boundary {{0.000 9.757} {0.996 10.229}} -port VSS
+```
+<div align="center">
+<img width="412" alt="3 1" src="https://github.com/user-attachments/assets/d88abafb-c779-4e64-9f64-783f35c46af2" />
+</div>
+
+```
 # Define core ring
-create_pg_ring_pattern core_ring_pattern \
-  -horizontal_layer M7 -horizontal_width 0.5 -horizontal_spacing 0.45 \
-  -vertical_layer M8 -vertical_width 0.5 -vertical_spacing 0.45
-
-set_pg_strategy core_power_ring \
-  -core -pattern {{name:core_ring_pattern} {nets:{VDD VSS}} {offset:{1 1}}}
-
+create_pg_ring_pattern core_ring_pattern -horizontal_layer M9 -horizontal_width 0.5 -horizontal_spacing 0.5 -vertical_layer M8 -vertical_width 0.5 -vertical_spacing 0.5
+set_pg_strategy core_power_ring -core -pattern {{name:core_ring_pattern} {nets:{VDD VSS}} {offset: {1 1}}}
 compile_pg -strategies core_power_ring
+```
+<div align="center">
+<img width="343" alt="8" src="https://github.com/user-attachments/assets/b9ae751b-b6eb-4077-8bb1-d9a3e8af62ac" />
+</div>
 
+```
 # Define mesh pattern
-create_pg_mesh_pattern mesh -layers {\
-  {{vertical_layer:M6} {width:0.5} {spacing:interleaving} {pitch:2} {offset:1}} \
-  {{horizontal_layer:M5} {width:0.5} {spacing:interleaving} {pitch:2} {offset:1}}}
-
-set_pg_strategy core_mesh \
-  -pattern {{name:mesh} {nets:VDD VSS}} -core -extension {stop:innermost_ring}
+create_pg_mesh_pattern mesh -layers {{{vertical_layer: M6} {width: 0.5} {spacing: interleaving} {pitch: 2} {offset: 1}} {{horizontal_layer: M7} {width: 0.5} {spacing: interleaving} {pitch: 2} {offset: 1}}}
+set_pg_strategy core_mesh -pattern {{name:mesh} {nets:VDD VSS}} -core -extension {stop:innermost_ring}
 compile_pg -strategies core_mesh
+```
+<div align="center">
+<img width="339" alt="11" src="https://github.com/user-attachments/assets/7b658fc0-4ac2-48a8-9a73-e8fc961bd509" />
+</div>
 
+```
 # Standard cell rail connection
-create_pg_std_cell_conn_pattern std_cell_rail -layers M1 -rail_width 0.2
-set_pg_strategy rail_strategy \
-  -core -pattern {{name:std_cell_rail} {nets:VDD VSS}}
+create_pg_std_cell_conn_pattern std_cell_rail -layers M1 -rail_width 0.19
+set_pg_strategy rail_strategy -core -pattern {{name: std_cell_rail} {nets: VDD VSS}}
 compile_pg -strategies rail_strategy
+```
+<div align="center">
+<img width="353" alt="12" src="https://github.com/user-attachments/assets/6c462008-7286-4096-916c-60ecc1b7c857" />
+</div>
 
-# Power analysis
-report_power
-report_power_calculation
+```
+check_pg_drc
+```
+<div align="center">
+<img width="455" alt="13" src="https://github.com/user-attachments/assets/b70ba5a8-09cc-4888-9631-4ca92e9675f1" />
+</div>
+
+```
+check_pg_connectivity
+```
+<div align="center">
+<img width="453" alt="15" src="https://github.com/user-attachments/assets/84d1275f-2a9d-4b2a-98f0-67e4c189159f" />
+</div>
+
+```
+check_pg_missing_vias
+```
+<div align="center">
+<img width="344" alt="14" src="https://github.com/user-attachments/assets/ee5866cb-0422-4b59-bd38-fb9284ac9467" />
+</div>
+
+```
 report_power_domains
-analyze_power_plan -nets {VDD VSS} -power_budget 1000
+```
+<div align="center">
+<img width="334" alt="16" src="https://github.com/user-attachments/assets/ac488972-b74f-470a-9481-5a7caff916f8" />
+</div>
+
+```
 analyze_power_plan -report_track_utilization_only
 ```
-### [**Powerplan Optimizations**](#powerplan-optimizations)
+<div align="center">
+<img width="473" alt="17" src="https://github.com/user-attachments/assets/897246ce-c887-4cdb-8261-35f0fc1370f1" />
+</div>
+
+```
+report_utilization
+```
+<div align="center">
+<img width="776" alt="18" src="https://github.com/user-attachments/assets/5a77356d-4499-42b7-9de7-bdbbf6f68e79" />
+</div>
+
+### [Powerplan Optimizations](#powerplan-optimizations)
 
 - Minimize IR drop by adjusting stripe width, pitch, and metal layer usage.
 - Balance power distribution across metal layers.
 - Place macros close to critical blocks to ensure they get clean and stable power.
 
-### [**Outputs**](#outputs)
+### [Outputs](#outputs)
 
 <div align="center">
 <pre>
@@ -1132,7 +1205,7 @@ analyze_power_plan -report_track_utilization_only
 </pre>
 </div>
 
-### [**Checks**](#checks) 
+### [Checks](#checks) 
 
 | Check                  | Purpose                                               |
 |------------------------|------------------------------------------------------ |
@@ -1151,7 +1224,7 @@ analyze_power_plan -report_track_utilization_only
 - Minimize wirelength and congestion
 - Ensure legality and design rule compliance
 
-### [**Inputs**](#inputs)
+### [Inputs](#inputs)
 
 <div align="center">
 <pre>
@@ -1169,7 +1242,7 @@ analyze_power_plan -report_track_utilization_only
 </pre>
 </div>
 
-### [**Placement Steps**](#placement-steps)
+### [Placement Steps](#placement-steps)
 
 1. **Pre-Placement Checks**
    - No floating nets or cells
@@ -1195,7 +1268,7 @@ analyze_power_plan -report_track_utilization_only
 6. **Final Optimization**
    - Focus on optimizing for power, area, and final timing closure
 
-### [**Script**](#script) 
+### [Script](#script) 
 
 ```tcl
 set PDK_PATH /data/pdk/pdk32nm/SAED32_EDK/
@@ -1231,21 +1304,100 @@ set_parasitic_parameters -late_spec $parasitic1 -early_spec $parasitic1
 # Apply constraints and scenarios
 source $Constraints
 set_scenario_status func_fast -hold false -setup true -leakage_power true -dynamic_power true -max_capacitance true -min_capacitance false -max_transition true -active true
+report_timing
+report_timing -delay_type min
+```
+| Post-Setup       | Post-Hold     |
+|-----------------|----------------|
+| <img width="337" alt="21 1" src="https://github.com/user-attachments/assets/930a459e-d4de-401e-a968-829d37fc1844" /> | <img width="350" alt="22 1" src="https://github.com/user-attachments/assets/5dcffb72-f2c6-4819-be56-8ca1a6d57bf4" /> | <br><br>
 
+<div align="center">
+<img width="910" alt="51" src="https://github.com/user-attachments/assets/74c614c3-bfe8-4464-9800-422f07ce23a0" />
+</div> 
+
+```
 # Perform placement
 place_opt
 legalize_placement
+```
+<div align="center">
+<img width="335" alt="26 1" src="https://github.com/user-attachments/assets/c94b21d5-f7cf-4aa5-b536-9b9106ad2116" />
+</div> <br> <br>
 
+<table align="center">
+  <tr>
+    <td align="center" style="padding: 10px;">
+      <img width="667" alt="26 2" src="https://github.com/user-attachments/assets/254d2169-ba87-4fdf-8f70-596c24263ed4" />
+    </td>
+    <td align="center" style="padding: 10px;">
+      <img width="501" alt="26" src="https://github.com/user-attachments/assets/1828a104-8106-48f8-b615-b61c5fa8a237" />
+    </td>
+  </tr>
+</table>
+
+```
 # Reports
 report_congestion
+```
+<div align="center">
+<img width="485" alt="31" src="https://github.com/user-attachments/assets/ddb69058-8a61-43eb-b794-90c5f262f24f" />
+</div> <br> <br>
+
+```
 report_placement
+```
+<div align="center">
+<img width="596" alt="29" src="https://github.com/user-attachments/assets/f2360b79-10e3-48a0-b5ca-bf3fc54a98dc" />
+</div> <br> <br>
+
+```
 report_utilization
-report_cells
-report_timing
+```
+<div align="center">
+<img width="616" alt="29 1" src="https://github.com/user-attachments/assets/f6d3ae61-b3d1-4ac2-a5c5-b21fa9ed47dc" />
+</div> <br> <br>
+
+```
 report_global_timing
 ```
+<div align="center">
+<img width="271" alt="30" src="https://github.com/user-attachments/assets/dee4ef71-8c24-40b1-89fa-039c5c0f7c59" />
+</div> <br> <br>
 
-### [**Placement Optimizations**](#placement-optimizations)
+```
+check_legality
+```
+<table align="center">
+  <tr>
+    <td align="center" style="padding: 10px;">
+      <img width="526" alt="30 1" src="https://github.com/user-attachments/assets/2dfcbc53-503b-4441-a222-80670e630e0a" />
+    </td>
+    <td align="center" style="padding: 10px;">
+      <img width="543" alt="30 2" src="https://github.com/user-attachments/assets/0b5c86df-67b1-438b-9a68-df0f5e12bceb" />
+    </td>
+  </tr>
+</table>
+<br><br>
+
+<table align="center">
+  <thead>
+    <tr>
+      <th>Cell Density</th>
+      <th>Pin Density</th>
+    </tr>
+  </thead>
+  <tr>
+    <td align="center" style="padding: 10px;">
+      <img width="344" alt="27 - Cell Density" src="https://github.com/user-attachments/assets/135d3214-b59d-4b0e-b2ed-c3475d6e5f1a" />
+    </td>
+    <td align="center" style="padding: 10px;">
+      <img width="341" alt="28 - Pin Density" src="https://github.com/user-attachments/assets/ed9403de-656f-482b-b7ca-da90e09dfa3e" />
+    </td>
+  </tr>
+</table>
+
+
+### [Placement Optimizations](#placement-optimizations)
 
 - **Timing-Driven Placement**  
   Improve setup/hold slack by adjusting cell locations based on timing analysis.
@@ -1256,7 +1408,7 @@ report_global_timing
 - **Power-Aware Placement**  
   Minimize dynamic power by shortening high-activity nets and strategically placing power-hungry cells.
 
-### [**Outputs**](#outputs)
+### [Outputs](#outputs)
 
 <div align="center">
 <pre>
@@ -1272,7 +1424,7 @@ report_global_timing
 </div>
 <br><br>
 
-### [**Checks**](#checks)
+### [Checks](#checks)
 
 | Check Command             | Purpose                                           |
 |---------------------------|---------------------------------------------------|
@@ -1289,14 +1441,14 @@ report_global_timing
 **Clock Tree Synthesis (CTS)** is the process of building and optimizing the clock network in a chip. It distributes the clock signal from the source (like a PLL or clock port) to all sequential elements (flip-flops, latches) with minimal **skew** and controlled **insertion delay**.
 
 
-### [**Objectives**](#objectives)
+### [Objectives](#objectives)
 
 - Distribute the clock signal efficiently across the chip.
 - Minimize **clock skew** (difference in clock arrival times).
 - Control **insertion delay** (delay from source to sinks).
 - Balance setup and hold timing paths.
 
-### [**Inputs**](#inputs)
+### [Inputs](#inputs)
 
 <div align="center">
 <pre>
@@ -1324,15 +1476,34 @@ report_global_timing
 ### 2. Concurrent Clock and Data (CCD) Flow
 - Clock tree is built **with data path knowledge**.
 - Focuses on **meeting timing (setup/hold)** during CTS.
-- Clock and data paths are co-optimized in iterations.
+- Clock and data paths are co-optimised in iterations.
 
 
-### [**Script**](#script)
+### [Script](#script)
 
 ```tcl
 check_design -checks pre_clock_tree_stage
 synthesize_clock_trees
+```
+<div align="center">
+<img width="343" alt="32" src="https://github.com/user-attachments/assets/3436795b-8cc1-4c0a-9862-695b65c0f3e0" />
+</div>
 
+<h3 align="center">PRE-CTS</h3>
+
+<table align="center">
+  <tr>
+    <td align="center" style="padding: 10px;">
+      <img width="104" alt="34" src="https://github.com/user-attachments/assets/32ea64b3-05ff-43c2-b32d-43509f9e6232" />
+    </td>
+    <td align="center" style="padding: 10px;">
+      <img width="403" alt="35" src="https://github.com/user-attachments/assets/913aaeb0-8f0d-44be-8f4e-5d5880450622" />
+    </td>
+  </tr>
+</table>
+
+
+```
 # Enable local skew optimization
 set_app_options -name cts.compile.enable_local_skew -value true
 set_app_options -name cts.optimize.enable_local_skew -value true
@@ -1342,10 +1513,28 @@ set_app_options -name cts.compile.enable_global_route -value true
 get_corners
 set_clock_tree_options -target_latency 0.3 -target_skew 0.02 -corner $corner1
 
-# Run clock optimization
+# Run clock optimisation
 clock_opt
 ```
-### [**CTS Optimizations**](#cts-optimizations)
+<div align="center">
+<img width="344" alt="39" src="https://github.com/user-attachments/assets/0b645126-1fa7-42f3-b625-14a3f6695472" />
+</div> 
+
+
+<h3 align="center">POST-CTS</h3>
+
+<table align="center">
+  <tr>
+    <td align="center" style="padding: 10px;">
+      <img width="419" alt="38" src="https://github.com/user-attachments/assets/21ec1223-e0f2-4f61-b52e-fef823218437" />
+    </td>
+    <td align="center" style="padding: 10px;">
+      <img width="730" alt="41" src="https://github.com/user-attachments/assets/b4aadbbd-253c-4b64-a68d-2a0aaf2c91fd" />
+    </td>
+  </tr>
+</table>
+
+### [CTS Optimizations](#cts-optimizations)
 
 - **Skew Balancing**  
   Equalize the arrival time of the clock signal to all flip-flops and latches to avoid timing violations.
@@ -1356,7 +1545,7 @@ clock_opt
 - **Buffer/Repeater Insertion**  
   Insert buffers or inverters to strengthen the clock signal, meet transition constraints, and drive long-distance nets effectively.
 
-### [**Outputs**](#outputs)
+### [Outputs](#outputs)
 
 <div align="center">
 <pre>
@@ -1371,7 +1560,7 @@ clock_opt
 </pre>
 </div>
 
-### [**Checks**](#checks) 
+### [Checks](#checks) 
 
 | **Check Command**                 | **Purpose**                                                   |
 |----------------------------------|----------------------------------------------------------------|

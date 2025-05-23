@@ -335,7 +335,270 @@ Verdi -cov -covdir simv.vdb
 
 ## [SV Methodology](#sv-methodology)
 
-	
+<div align="center">
+<img width="524" alt="30" src="https://github.com/user-attachments/assets/280126e5-fead-43eb-b3a8-279d2d26525c" />
+</div>
+
+### Packet
+```
+class packet;
+   bit [3:0] A, B;
+   bit Clock, C_in;
+   bit [3:0] SUM;
+   bit C_out;
+endclass
+```
+
+### Generator
+
+```
+class generator;
+  packet pkt;
+  mailbox gen2drv;
+  
+  function new(mailbox mbx);
+    this.gen2drv = mbx;
+  endfunction
+  
+  task run;
+    repeat(10)
+   begin
+      pkt = new();
+      pkt.randomize();
+      gen2drv.put(pkt);
+     #10;
+    end
+  endtask
+endclass
+```
+
+### Driver
+
+```
+class driver;
+  packet pkt;
+  virtual intf vif;
+  mailbox gen2drv;
+  function new(virtual intf arg_vif, mailbox mbx);
+    this.vif = arg_vif;
+    this.gen2drv = mbx;
+  endfunction
+  
+  
+  task run;
+    repeat(5) 
+      
+      begin
+        packet pkt;
+      gen2drv.get(pkt);
+      vif.A    <= pkt.A;
+      vif.B    <= pkt.B;
+      vif.C_in <= pkt.C_in;
+      @(posedge vif.Clock);
+    end
+  endtask
+endclass
+```
+
+### Interface
+
+```
+interface intf();
+
+  logic [3:0] A, B;
+  logic Clock, C_in;
+  logic [3:0] SUM;
+  logic C_out;
+
+endinterface
+```
+### Monitor
+
+```
+class monitor;
+   mailbox mon2scr;
+   packet pkt;
+   virtual intf vif;
+  
+ function new(virtual intf arg_vif, mailbox arg_mbx1);
+    this.vif = arg_vif;
+    this.mon2scr = arg_mbx1; 
+  endfunction
+  
+ task run;
+      repeat(5) begin
+      pkt = new();
+      pkt.A     = vif.A;
+      pkt.B     = vif.B;
+      pkt.C_in  = vif.C_in;
+      pkt.SUM   = vif.SUM;
+      pkt.C_out = vif.C_out;
+      mon2scr.put(pkt);
+      #10;
+    end
+  endtask
+endclass
+```
+
+### Scoreboard
+
+```
+class scoreboard;
+  mailbox mon2scr;
+  packet pkt;
+
+  function new(mailbox arg_mbx);
+    this.mon2scr = arg_mbx;
+  endfunction
+ 
+ task run;
+    bit [4:0] expected_sum;
+    repeat (5) begin
+    mon2scr.get(pkt);
+    expected_sum = pkt.A + pkt.B + pkt.C_in;
+    if ((pkt.SUM !== expected_sum[3:0]) || (pkt.C_out !== expected_sum[4])) begin
+      $display("[FAIL] Got: SUM=%0d, C_out=%0d | Expected: SUM=%0d, C_out=%0d",
+               pkt.SUM, pkt.C_out, expected_sum[3:0], expected_sum[4]);
+    end else begin
+      $display("[PASS]");
+      pkt.print();
+    end
+  end
+endtask
+      
+endclass
+```
+
+### TOP
+
+```
+`include "interface.sv"
+`include "packet.sv"
+`include "generator.sv"
+`include "driver.sv"
+`include "monitor.sv"
+`include "scoreboard.sv"
+
+module top;
+
+  bit clk;
+  intf inf();
+
+    full_adder dut (
+    .A(inf.A),
+    .B(inf.B),
+    .Clock(clk),
+    .C_in(inf.C_in),
+    .SUM(inf.SUM),
+    .C_out(inf.C_out)
+  );
+
+  always #5 clk = ~clk;
+  
+  mailbox mon2scr = new;
+  mailbox gen2drv = new;
+  generator gen;
+  driver drv;
+  monitor mon;
+  scoreboard scr;
+
+  initial begin
+  #10 inf.A = 4'b0000; inf.B = 4'b0000; inf.C_in = 0;  // 0 + 0 + 0 = 0
+  #10 inf.A = 4'b0001; inf.B = 4'b0001; inf.C_in = 0;  // 1 + 1 = 2
+  #10 inf.A = 4'b0101; inf.B = 4'b0011; inf.C_in = 1;  // 5 + 3 + 1 = 9
+  #10 inf.A = 4'b1111; inf.B = 4'b0001; inf.C_in = 0;  // 15 + 1 = 16 
+ 
+    gen = new(gen2drv);
+    drv = new(inf, gen2drv);
+    mon = new(inf, mon2scr);
+    scr = new(mon2scr);
+
+    fork
+      gen.run();
+      drv.run();
+      mon.run();
+      scr.run();
+    join
+  end
+  
+  initial
+    $monitor("$time", "clk = %b, A = %b, B = %b, C_in = %b, SUM = %b, C_out = %b", clk, inf.A, inf.B, inf.C_in, inf.SUM, inf.C_out);
+  initial begin
+   
+	$fsdbDumpfile("dump.fsdb");
+	$fsdbDumpvars(0,top);
+  end
+  initial
+    #100 $finish;
+endmodule
+
+```
+
+VCS
+
+```
+vcs -sverilog full_adder.v top.sv -full64 -lca -kdb -debug_access+all
+```
+<div align="center">
+<img width="359" alt="21" src="https://github.com/user-attachments/assets/b6b37695-c97f-48eb-98a3-bcaf85122e70" />
+</div> <br> <br>
+
+```
+./simv -verdi
+```
+
+```
+$timeclk = 0, A = xxxx, B = xxxx, C_in = x, SUM = xxxx, C_out = x
+$timeclk = 1, A = xxxx, B = xxxx, C_in = x, SUM = xxxx, C_out = x
+$timeclk = 0, A = 0000, B = 0000, C_in = 0, SUM = xxxx, C_out = x
+$timeclk = 1, A = 0000, B = 0000, C_in = 0, SUM = xxxx, C_out = x
+$timeclk = 0, A = 0001, B = 0001, C_in = 0, SUM = xxxx, C_out = x
+$timeclk = 1, A = 0001, B = 0001, C_in = 0, SUM = 0000, C_out = 0
+$timeclk = 0, A = 0101, B = 0011, C_in = 1, SUM = 0000, C_out = 0
+$timeclk = 1, A = 0101, B = 0011, C_in = 1, SUM = 0010, C_out = 0
+[FAIL] Got: SUM=2, C_out=0 | Expected: SUM=0, C_out=1
+$timeclk = 0, A = 0000, B = 0000, C_in = 0, SUM = 0010, C_out = 0
+$timeclk = 1, A = 0000, B = 0000, C_in = 0, SUM = 1001, C_out = 0
+[FAIL] Got: SUM=9, C_out=0 | Expected: SUM=0, C_out=0
+$timeclk = 0, A = 0000, B = 0000, C_in = 0, SUM = 1001, C_out = 0
+$timeclk = 1, A = 0000, B = 0000, C_in = 0, SUM = 0000, C_out = 0
+[PASS]
+[PKT] A=0 B=0 C_in=0 => SUM=0 C_out=0
+$timeclk = 0, A = 0000, B = 0000, C_in = 0, SUM = 0000, C_out = 0
+$timeclk = 1, A = 0000, B = 0000, C_in = 0, SUM = 0000, C_out = 0
+[PASS]
+[PKT] A=0 B=0 C_in=0 => SUM=0 C_out=0
+$timeclk = 0, A = 0000, B = 0000, C_in = 0, SUM = 0000, C_out = 0
+$timeclk = 1, A = 0000, B = 0000, C_in = 0, SUM = 0000, C_out = 0
+[PASS]
+[PKT] A=0 B=0 C_in=0 => SUM=0 C_out=0
+$timeclk = 0, A = 0000, B = 0000, C_in = 0, SUM = 0000, C_out = 0
+$timeclk = 1, A = 0000, B = 0000, C_in = 0, SUM = 0000, C_out = 0
+$timeclk = 0, A = 0000, B = 0000, C_in = 0, SUM = 0000, C_out = 0
+$timeclk = 1, A = 0000, B = 0000, C_in = 0, SUM = 0000, C_out = 0
+$finish called from file "testbench.sv", line 58.
+$finish at simulation time                  100
+Simulation complete, time is 100.
+testbench.sv, 58 :     #100 $finish;
+```
+
+<div align="center">
+<img width="959" alt="23" src="https://github.com/user-attachments/assets/9fab2f20-97a9-496e-a606-ee28c7620970" />
+</div>
+
+### Schematic view
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/1fce8bba-d374-4297-bda1-736824655ca7" width="311" alt="26" />
+  <img src="https://github.com/user-attachments/assets/94170a84-c615-4007-8556-373d344870d4" width="273" alt="25" />
+</p>
+
+### Waveform
+
+<img width="950" alt="27" src="https://github.com/user-attachments/assets/9820aeaa-5880-4790-bdd6-56961edcffa6" />
+
+
+
 # [Linting](#linting)
 
 **`Linting`** is the process of analyzing HDL code to detect potential errors, coding standard violations, and design issues early in the development cycle.

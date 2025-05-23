@@ -1105,7 +1105,7 @@ verify
 
 <img width="689" alt="36" src="https://github.com/user-attachments/assets/c728a6e9-35c7-4164-8ecb-caeb3ac7b9a6" />
 
-<img width="958" alt="37" src="https://github.com/user-attachments/assets/960805c3-fd05-48b8-94f4-bcd87ac4d59f" />
+<img width="959" alt="38" src="https://github.com/user-attachments/assets/4d35cafa-4c1e-4d82-985d-1f6bf737aeef" />
 
 
    
@@ -1242,24 +1242,23 @@ For a square floorplan, use:
 initialize_floorplan -core_utilization 0.65 -side_ratio {19.95 19.95} -core_offset {3}
 ```
 <p align="center">
-  <img width="283" alt="1 1" src="https://github.com/user-attachments/assets/af30460c-1642-46da-bf4a-ea1b100e9020" />
   <img width="409" alt="2" src="https://github.com/user-attachments/assets/e67f9fae-5b1e-4fa9-b639-dc3194f107a1" />
+  <img width="283" alt="1 1" src="https://github.com/user-attachments/assets/af30460c-1642-46da-bf4a-ea1b100e9020" />
 </p>
+
 
 Ports Placement 
 ```
 # Pin Constraints
-set_individual_pin_constraints -sides 1  -ports [remove_from_collection [all_inputs] "Clock C_in"] -pin_spacing 5
-place_pins -ports [all_inputs]
-set_individual_pin_constraints -sides 2  -ports [get_ports "C_in"] -pin_spacing 5
-place_pins -ports {Clock C_in}
-set_individual_pin_constraints -sides 4  -ports [get_ports "Clock"] -pin_spacing 5
-place_pins -ports {Clock C_in}
-set_individual_pin_constraints -sides {3} -ports [all_outputs] -pin_spacing 5
+set_individual_pin_constraints -sides 1  -ports [remove_from_collection [all_inputs] "Clock"] -allowed_layers M3 -pin_spacing_distance 2.5
+place_pins -ports [remove_from_collection [all_inputs] "Clock"]
+set_individual_pin_constraints -allowed_layers M4 -ports [get_ports "Clock"] -location {11.318 0.000}
+place_pins -ports {Clock}
+set_individual_pin_constraints -sides {3} -allowed_layers M3 -ports [all_outputs] -pin_spacing 3
 place_pins -ports [all_outputs]
 ```
 <p align="center">
-<img width="404" alt="3" src="https://github.com/user-attachments/assets/33e72d1d-e379-406f-90d8-e330416643f3" />
+<img width="343" alt="1" src="https://github.com/user-attachments/assets/4f24c228-d123-49c7-8a97-bbcb53714a63" />
 </p>
 
 ### [Floorplan Optimizations](#floorplan-optimizations)
@@ -1273,7 +1272,7 @@ Effective floorplanning sets the stage for meeting timing, area, and power goals
   Align and group macros (like SRAMs, IPs) based on functionality, power domains, and routing ease. This improves accessibility and signal integrity.
 
 - **Utilization Balance**  
-  Maintain a balanced core utilization across the floorplan. Over-utilized areas can cause routing failures and timing violations later in the flow.
+  Maintain a balanced core utilization across the floorplan. Over-utilised areas can cause routing failures and timing violations later in the flow.
 
 - **Timing-Aware Planning**  
   Place high-speed and critical-path logic close together to reduce delay. Keep clocked elements and key data paths short and direct for better performance.
@@ -1305,11 +1304,11 @@ After completing the floorplan stage, several essential checks are performed to 
 | `check_pin_placement`      | Verifies that input/output pins are correctly placed and constrained.   |
 | `check_floorplan`          | Checks for unplaced macros, missing core rows, and blockages.           |
 | `report_utilization`       | Summarizes cell area, core area, and utilization.                       |
-| `report_area`              | Reports area breakdown for logic, macros, etc.                          |
+| `area (report_design)`     | Reports area breakdown for logic, macros, etc.                          |
 | `check_power_domains`      | Validates correctness of MV (multi-voltage) power domain definitions.   |
 | `check_mv_design`          | Checks isolation, level shifters, and power intent consistency.         |
-| `report_floorplan`         | Gives detailed info on block shape, area, margins, and pin access.      |
-| `report_clock_domains`     | Ensures clock-related partitions are defined and reachable.             |
+| `report floorplan`         | Gives detailed info on block shape, area, margins, and pin access.      |
+| `report clocke domains`     | Ensures clock-related partitions are defined and reachable.             |
 | Visual inspection (GUI)    | Manual review of macro placement, congestion hotspots, and pin access.  |
 
 
@@ -1384,12 +1383,14 @@ create_net -ground VSS
 connect_pg_net -pg -design full_adder -automatic -all_blocks
 ```
 <div align="center">
-<img width="638" alt="4" src="https://github.com/user-attachments/assets/d21a93c7-f103-4881-8e98-3a6f79e9f3d6" />
+  <img src="https://github.com/user-attachments/assets/a911941b-0205-43e4-806f-7187e9efb0a5" width="413" alt="4" style="display: inline-block; margin-right: 10px;" />
+  <img src="https://github.com/user-attachments/assets/d4e44fb7-608c-4e3e-a244-fc9a58848637" width="196" alt="3" style="display: inline-block;" />
 </div>
 
+
 ```
-create_shape -shape_type rect -layer M7 -boundary {{0.000 8.759} {1.991 9.242}} -port VDD
-create_shape -shape_type rect -layer M7 -boundary {{0.000 9.757} {0.996 10.229}} -port VSS
+create_shape -shape_type rect -layer M7 -boundary {{0.000 6.784} {2.629 7.125}} -port VDD
+create_shape -shape_type rect -layer M7 -boundary {{0.000 7.258} {1.631 7.600}} -port VSS
 ```
 <div align="center">
 <img width="412" alt="3 1" src="https://github.com/user-attachments/assets/d88abafb-c779-4e64-9f64-783f35c46af2" />
@@ -1397,32 +1398,34 @@ create_shape -shape_type rect -layer M7 -boundary {{0.000 9.757} {0.996 10.229}}
 
 ```
 # Define core ring
-create_pg_ring_pattern core_ring_pattern -horizontal_layer M9 -horizontal_width 0.5 -horizontal_spacing 0.5 -vertical_layer M8 -vertical_width 0.5 -vertical_spacing 0.5
-set_pg_strategy core_power_ring -core -pattern {{name:core_ring_pattern} {nets:{VDD VSS}} {offset: {1 1}}}
+create_pg_ring_pattern core_ring_pattern -horizontal_layer M9 -horizontal_width 0.7 -horizontal_spacing 0.4 -vertical_layer M8 -vertical_width 0.6 -vertical_spacing 0.4
+set_pg_strategy core_power_ring -core -pattern {{name:core_ring_pattern} {nets:{VDD VSS}} {offset: {0.45 0.45}}}
 compile_pg -strategies core_power_ring
 ```
-<div align="center">
-<img width="343" alt="8" src="https://github.com/user-attachments/assets/b9ae751b-b6eb-4077-8bb1-d9a3e8af62ac" />
-</div>
+<p align="center">
+  <img width="337" alt="5" src="https://github.com/user-attachments/assets/6492c6a2-b90a-4e8d-a507-29ca6acb8f6c" />
+  <img width="181" alt="6" src="https://github.com/user-attachments/assets/d83655b4-2a7a-41fe-995c-5ea13db4d488" />
+</p>
+
 
 ```
 # Define mesh pattern
-create_pg_mesh_pattern mesh -layers {{{vertical_layer: M6} {width: 0.5} {spacing: interleaving} {pitch: 2} {offset: 1}} {{horizontal_layer: M7} {width: 0.5} {spacing: interleaving} {pitch: 2} {offset: 1}}}
+create_pg_mesh_pattern mesh -layers {{{vertical_layer: M6} {width: 0.34} {spacing: interleaving} {pitch: 1.2} {offset: 0.45}} {{horizontal_layer: M7} {width: 0.38} {spacing: interleaving} {pitch: 1} {offset: 0.45}}}
 set_pg_strategy core_mesh -pattern {{name:mesh} {nets:VDD VSS}} -core -extension {stop:innermost_ring}
 compile_pg -strategies core_mesh
 ```
 <div align="center">
-<img width="339" alt="11" src="https://github.com/user-attachments/assets/7b658fc0-4ac2-48a8-9a73-e8fc961bd509" />
+<img width="339" alt="7" src="https://github.com/user-attachments/assets/f0b0e4db-52db-4460-adf7-bb671229f2d7" />
 </div>
 
 ```
 # Standard cell rail connection
-create_pg_std_cell_conn_pattern std_cell_rail -layers M1 -rail_width 0.19
+create_pg_std_cell_conn_pattern std_cell_rail -layers M1 -rail_width 0.5
 set_pg_strategy rail_strategy -core -pattern {{name: std_cell_rail} {nets: VDD VSS}}
 compile_pg -strategies rail_strategy
 ```
 <div align="center">
-<img width="353" alt="12" src="https://github.com/user-attachments/assets/6c462008-7286-4096-916c-60ecc1b7c857" />
+<img width="344" alt="8" src="https://github.com/user-attachments/assets/cb356edb-d5d4-4d6f-bfe5-40f39981d034" />
 </div>
 
 ```
@@ -1555,7 +1558,15 @@ report_utilization
 ```tcl
 set PDK_PATH /data/pdk/pdk32nm/SAED32_EDK/
 set Constraints ./../Constraints/full_adder.sdc
+source $Constraints
+```
 
+
+| Pre-Setup       | Pre-Hold       |
+|-----------------|----------------|
+| <img width="448" alt="9" src="https://github.com/user-attachments/assets/f9f29efe-faff-4d1b-9bb8-d91fd099e1b8" /> | <img width="454" alt="10" src="https://github.com/user-attachments/assets/cded07d1-3d22-4391-a179-89d35009f8d0" /> | <br><br>
+
+```
 # Pre-placement checks
 check_design -checks pre_placement_stage
 set_app_options -name place.coarse.continue_on_missing_scandef -value true
@@ -1565,7 +1576,7 @@ remove_mode -all
 remove_corner -all
 remove_scenario -all
 
-# Define a new scenario
+# worst-case analysis
 set mode1 "func"
 set corner1 "slow"
 set scenario1 "${mode1}_${corner1}"
@@ -1573,7 +1584,6 @@ set scenario1 "${mode1}_${corner1}"
 create_mode $mode1
 create_corner $corner1
 create_scenario -name $scenario1 -mode $mode1 -corner $corner1
-report_scenarios
 
 # Setup parasitics
 set parasitic1 "p1"
@@ -1585,17 +1595,45 @@ set_parasitic_parameters -late_spec $parasitic1 -early_spec $parasitic1
 
 # Apply constraints and scenarios
 source $Constraints
-set_scenario_status func_fast -hold false -setup true -leakage_power true -dynamic_power true -max_capacitance true -min_capacitance false -max_transition true -active true
 report_timing
 report_timing -delay_type min
 ```
 | Post-Setup       | Post-Hold     |
 |-----------------|----------------|
-| <img width="337" alt="21 1" src="https://github.com/user-attachments/assets/930a459e-d4de-401e-a968-829d37fc1844" /> | <img width="350" alt="22 1" src="https://github.com/user-attachments/assets/5dcffb72-f2c6-4819-be56-8ca1a6d57bf4" /> | <br><br>
+| <img width="452" alt="12" src="https://github.com/user-attachments/assets/f748a6ca-6a8e-41e8-a610-f4b13233fa32" /> | <img width="452" alt="13" src="https://github.com/user-attachments/assets/951e6c4b-36e8-41d1-a973-500d2b3d2421" />| <br><br>
 
 <div align="center">
 <img width="910" alt="51" src="https://github.com/user-attachments/assets/74c614c3-bfe8-4464-9800-422f07ce23a0" />
 </div> 
+
+```
+#best_case analysis
+set mode1 "func"
+set corner2 "fast"
+set scenario2 "${mode2}_${corner2}"
+
+create_mode $mode1
+create_corner $corner2
+create_scenario -name $scenario2 -mode $mode1 -corner $corner2
+
+set parasitic2 "p2"
+set tluplus_file$parasitic2 "$PDK_PATH/tech/star_rcxt/saed32nm_1p9m_Cmin.tluplus"
+set layer_map_file$parasitic2 "$PDK_PATH/tech/star_rcxt/saed32nm_tf_itf_tluplus.map"
+
+read_parasitic_tech -tlup $tluplus_filep2 -layermap $layer_map_filep2 -name p2
+set_parasitic_parameters -late_spec $parasitic2 -early_spec $parasitic2
+
+source $Constraints
+
+set_scenario_status func_slow -hold false -setup true -leakage_power true -dynamic_power true -max_capacitance true -min_capacitance false -max_transition true -active true
+set_scenario_status func_fast -hold true -setup false -leakage_power true -dynamic_power true -max_capacitance true -min_capacitance false -max_transition true -active true
+report_scenarios
+report_timing -scenarios func_slow
+report_timing -scenarios func_slow -delay_type min
+report_timing -scenarios func_fast
+report_timing -scenarios func_fast -delay_type min
+```
+<img width="781" alt="14" src="https://github.com/user-attachments/assets/32e27d62-e562-4e9f-9737-c05167ea8d04" />
 
 ```
 # Perform placement
@@ -1603,7 +1641,7 @@ place_opt
 legalize_placement
 ```
 <div align="center">
-<img width="335" alt="26 1" src="https://github.com/user-attachments/assets/c94b21d5-f7cf-4aa5-b536-9b9106ad2116" />
+<img width="338" alt="15" src="https://github.com/user-attachments/assets/0d8dd119-e718-4a13-a048-79ae3f2ba421" />
 </div> <br> <br>
 
 <table align="center">
@@ -1765,10 +1803,11 @@ check_legality
 
 ```tcl
 check_design -checks pre_clock_tree_stage
+set_clock_routing_rules -default_rule  -min_routing_layer M4 -max_routing_layer M5  
 synthesize_clock_trees
 ```
 <div align="center">
-<img width="343" alt="32" src="https://github.com/user-attachments/assets/3436795b-8cc1-4c0a-9862-695b65c0f3e0" />
+<img width="337" alt="16" src="https://github.com/user-attachments/assets/77b10794-376f-4a69-8f32-5a301449d44d" />
 </div>
 
 <h3 align="center">PRE-CTS</h3>
@@ -1776,10 +1815,10 @@ synthesize_clock_trees
 <table align="center">
   <tr>
     <td align="center" style="padding: 10px;">
-      <img width="104" alt="34" src="https://github.com/user-attachments/assets/32ea64b3-05ff-43c2-b32d-43509f9e6232" />
+      <img width="101" alt="17" src="https://github.com/user-attachments/assets/99018b12-16b6-44fb-80e5-a5905f091b46" />
     </td>
     <td align="center" style="padding: 10px;">
-      <img width="403" alt="35" src="https://github.com/user-attachments/assets/913aaeb0-8f0d-44be-8f4e-5d5880450622" />
+      <img width="385" alt="18" src="https://github.com/user-attachments/assets/cd1b2e78-91a9-4a7f-86cd-9941f00e2f8f" />
     </td>
   </tr>
 </table>
@@ -1799,7 +1838,7 @@ set_clock_tree_options -target_latency 0.3 -target_skew 0.02 -corner $corner1
 clock_opt
 ```
 <div align="center">
-<img width="344" alt="39" src="https://github.com/user-attachments/assets/0b645126-1fa7-42f3-b625-14a3f6695472" />
+<img width="337" alt="19" src="https://github.com/user-attachments/assets/4d803bfe-1e38-4171-9d53-e88ea6cd5ae8" />
 </div> 
 
 
@@ -1808,10 +1847,10 @@ clock_opt
 <table align="center">
   <tr>
     <td align="center" style="padding: 10px;">
-      <img width="419" alt="38" src="https://github.com/user-attachments/assets/21ec1223-e0f2-4f61-b52e-fef823218437" />
+      <img width="415" alt="20" src="https://github.com/user-attachments/assets/1c79ea8c-a399-45fb-af1a-485f92c148f8" />
     </td>
     <td align="center" style="padding: 10px;">
-      <img width="730" alt="41" src="https://github.com/user-attachments/assets/b4aadbbd-253c-4b64-a68d-2a0aaf2c91fd" />
+      <img width="614" alt="21" src="https://github.com/user-attachments/assets/bd8ef027-6e61-4494-ab73-26ad9d46e6a1" />
     </td>
   </tr>
 </table>
@@ -1916,6 +1955,10 @@ set_app_options -block [current_block] -name route.detail.diode_libcell_names -v
 # Routing commands
 route_global
 route_track
+```
+<img width="665" alt="22" src="https://github.com/user-attachments/assets/30e5d904-9236-43fc-9c3d-3b6edd1bd450" />
+
+```
 route_detail
 route_opt
 

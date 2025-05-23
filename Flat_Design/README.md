@@ -985,7 +985,7 @@ To ensure correctness and meet design goals, several checks are carried out:
    - `check_timing`: Validates timing constraints are correctly defined and met
 
 
-# [Formality Equivalence Checking](#formality-equivalence-checking)
+# [Logical Equivalence Checking](#logical-equivalence-checking)
 
 ## What is Equivalence Checking?
 
@@ -1057,38 +1057,57 @@ Equivalence checking provides:
 
 Command to open tool
 ```
-formality
-```
-1. Reference Design
-
-```tcl
-#Read RTL into reference container
-read_verilog -container r -libname WORK -01 {./full_adder.v}
+fm_shell
 ```
 
-2. library file
+1. library file
    
 ```tcl
 # Load the standard cell library for mapping
 read_db {/data/pdk/pdk32nm/SAED32_EDK/lib/stdcell_rvt/db_ccs/saed32rvt_tt0p78vn40c.db}
 ```
+
+2. Reference Design
+
+```tcl
+# Read RTL reference design
+read_verilog -container r -libname WORK -05 {./full_adder.v}
+# set top module
+set_top r:/WORK/full_adder 
+```
+<img width="947" alt="31" src="https://github.com/user-attachments/assets/4ab1c77c-4dfe-4e8b-932e-8177883c910c" />
+
 3. Implementation Design
 
 ```
-# Read synthesized netlist into implementation container
-read_verilog -container i -libname WORK -01 {./full_adder.mapped.v}
+# Read implementation gate-level netlist
+read_verilog -container i -libname WORK -05 {./full_adder.mapped.v}
+# set top module
+set_top i:/WORK/full_adder
 ```
-4. Match
+<img width="950" alt="32" src="https://github.com/user-attachments/assets/2be663ed-2e66-4f1a-a046-7f974cec7e60" />
+
+4. Run Matching
 ```
-# Match design structures
 match
 ```
-5. Verify
+<img width="701" alt="33" src="https://github.com/user-attachments/assets/93eea3f0-094f-4e91-971c-3e6b30deb0b5" />
+
+5. perform verification
 ```
-# verify design
 verify
 ```
-6. Debug
+<img width="686" alt="34" src="https://github.com/user-attachments/assets/f7eba8b5-29ca-4841-80fd-eadcb8bd6dff" />
+
+<img width="957" alt="35" src="https://github.com/user-attachments/assets/a3d9f845-88ae-416c-b9a8-a415f885a2cc" />
+
+6. Analyze results and debug mismatches
+
+<img width="689" alt="36" src="https://github.com/user-attachments/assets/c728a6e9-35c7-4164-8ecb-caeb3ac7b9a6" />
+
+<img width="958" alt="37" src="https://github.com/user-attachments/assets/960805c3-fd05-48b8-94f4-bcd87ac4d59f" />
+
+
    
 # [Physical Design](#physical-design)
 

@@ -24,7 +24,7 @@
 ---
 
 
-### [Hierarchical Design](Hierarchical_Design/README.md)
+### [Hierarchical Design](Hierarchical_Design/README.md#hierarchical-design)
 
 
 1. [RTL](Hierarchical_Design/README.md#1-rtl)  

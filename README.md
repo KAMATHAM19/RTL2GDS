@@ -25,20 +25,21 @@
 
 ### [Hierarchical Design](Hierarchical_Design/README.md#hierarchical-design)
 
-1. [RTL](Hierarchical_Design/README.md#rtl)  
-2. [Simulation](Hierarchical_Design/README.md#simulation)  
-3. [Verification](Hierarchical_Design/README.md#verification)  
-4. [Linting](Hierarchical_Design/README.md#linting)  
-5. [Generation of `.lib` of 4-bit Full Adder](Hierarchical_Design/README.md#generation-of-lib-of-4-bit-full-adder)  
-6. [Generation of `.db` of 4-bit Full Adder](Hierarchical_Design/README.md#generation-of-db-of-4-bit-full-adder)  
-7. [Synthesis](Hierarchical_Design/README.md#synthesis)  
-8. [Formality Equivalence Checking](Hierarchical_Design/README.md#formality-equivalence-checking)  
-9. [Physical Design](Hierarchical_Design/README.md#physical-design)  
-   - **[Floorplan](Hierarchical_Design/README.md#floorplan)**  
-   - **[Powerplan](Hierarchical_Design/README.md#powerplan)**  
-   - **[Placement](Hierarchical_Design/README.md#placement)**  
-   - **[Clock Tree Synthesis](Hierarchical_Design/README.md#clock-tree-synthesis)**  
-   - **[Routing](Hierarchical_Design/README.md#routing)**  
+1. [RTL](Hierarchical_Design/README.md#1-rtl)  
+2. [Simulation](Hierarchical_Design/README.md#2-simulation)  
+3. [Verification](Hierarchical_Design/README.md#3-verification)  
+4. [Linting](Hierarchical_Design/README.md#4-linting)  
+5. [Generation of `.lib` of 4-bit Full Adder](Hierarchical_Design/README.md#5-generation-of-lib-of-4-bit-full-adder)  
+6. [Generation of `.db` of 4-bit Full Adder](Hierarchical_Design/README.md#6-generation-of-db-of-4-bit-full-adder)  
+7. [Synthesis](Hierarchical_Design/README.md#7-synthesis)  
+8. [Formality Equivalence Checking](Hierarchical_Design/README.md#8-formality-equivalence-checking)  
+9. [Physical Design](Hierarchical_Design/README.md#9-physical-design)  
+   - [Floorplan](Hierarchical_Design/README.md#91-floorplan)  
+   - [Powerplan](Hierarchical_Design/README.md#92-powerplan)  
+   - [Placement](Hierarchical_Design/README.md#93-placement)  
+   - [Clock Tree Synthesis](Hierarchical_Design/README.md#94-clock-tree-synthesis)  
+   - [Routing](Hierarchical_Design/README.md#95-routing)  
+
 
 
 ## Tools

@@ -1,4 +1,5 @@
-# RTL
+# [RTL](#rtl)
+
 ```verilog
 `include "full_adder.v"
 
@@ -42,7 +43,7 @@ assign C_out = cout2;
 endmodule
 ```
 
-# Simulation
+# [Simulation](#simulation)
 
 ```verilog
 `include "adder.v"
@@ -107,27 +108,31 @@ vcs -sverilog adder_tb.v -full64 -lca -kdb -debug_accesss+all
 ```
 ./simv -verdi
 ```
-
+<div align="center">
 <img width="959" alt="2" src="https://github.com/user-attachments/assets/8e147b1c-39f1-4ee2-a28e-78786781a4c6" />
-
+</div>
+<div align="center">
 <img width="358" alt="3" src="https://github.com/user-attachments/assets/e3feb67e-612a-43c5-be67-9ea701534d30" />
-
-
+</div>
+<div align="center">
 <img width="617" alt="4" src="https://github.com/user-attachments/assets/6b931069-f3f5-4da3-8ca0-1571496e8bab" />
-
+</div>
+<div align="center">
 <img width="694" alt="5" src="https://github.com/user-attachments/assets/d93ab962-ecc1-47fe-b590-257773206d5f" />
-
+</div>
+<div align="center">
 <img width="959" alt="6" src="https://github.com/user-attachments/assets/462dba68-bf28-4729-aff2-3b9b7d45a8c7" />
+</div>
 
+# [Verification](#verification)
 
-# Verification
+# [Linting](#linting)
 
-# Linting
-
+<div align="center">
 <img width="959" alt="8" src="https://github.com/user-attachments/assets/bff73d0b-a0b3-4c10-b14b-b5bf4f87cdad" />
+</div>
 
-
-# Generate .lib of 4bit FA from primetime
+# [Generation of .lib of 4bit Full Adder](#generation-of-lib-of-4bit-full-adder)
 
 ```
 pt_shell
@@ -142,7 +147,7 @@ extract_model -output final_full_adder -format lib
 ```
 <img width="766" alt="9" src="https://github.com/user-attachments/assets/deee8fd2-2be3-44be-bf34-36fb76fb5f6d" />
 
-# Generate .db file for 4bit FA
+# [Generation of .db of 4bit Full Adder](#generation-of-db-of-4bit-full-adder)
 
 ```
 lc_shell
@@ -151,9 +156,11 @@ read_lib ./../PT/final_full_adder.lib
 write_lib final_full_adder -output final_full_adder.db -format db
 
 ```
+<div align="center">
 <img width="958" alt="10" src="https://github.com/user-attachments/assets/d1471411-2f4c-4b19-bc07-24fb85ad593f" />
+</div>
 
-# Synthesis
+# [Synthesis](#synthesis)
 
 ```
 1. common_setup.tcl
@@ -207,22 +214,30 @@ set_app_var hdlin_enable_hier_map true
 #Parses the RTL code to check for syntax errors
 analyze -format verilog ${RTL_SOURCE_FILES}
 ```
+<div align="center">
 <img width="718" alt="11" src="https://github.com/user-attachments/assets/e3531ab7-bd2d-47db-a1a7-2d806f62a230" />
+</div>
 
 ```
 #Elaborates the design, resolving the HDL structure into a design database
 elaborate ${DESIGN_NAME}
 ```
+<div align="center">
 <img width="584" alt="12" src="https://github.com/user-attachments/assets/a5dd56ad-4ad8-4148-add2-88661acdc95e" />
-
+</div>
+<div align="center">
 <img width="959" alt="13" src="https://github.com/user-attachments/assets/e4f801ba-d90d-41a8-93c6-fe91d2589aae" />
-
+</div>
+<div align="center">
 <img width="758" alt="14" src="https://github.com/user-attachments/assets/5ee8b94b-ac88-4122-9832-6a00b7199d01" />
+</div>
 
 ```
 report_cell
 ```
+<div align="center">
 <img width="623" alt="18" src="https://github.com/user-attachments/assets/febe3432-2626-4589-ba46-ec20846aa0b5" />
+</div>
 
 ```
 #Sets the current working design to the top-level module
@@ -234,14 +249,20 @@ set_verification_top
 #Loads timing constraints from a Synopsys Design Constraints (SDC) file
 read_sdc -echo ./../Constraints/full_adder.sdc
 ```
-<img width="307" alt="15" src="https://github.com/user-attachments/assets/487827a8-ba63-4572-8721-bc5c66419789" />
-<img width="305" alt="16" src="https://github.com/user-attachments/assets/069edf29-8ff3-4973-8365-34826fec60a4" />
+
+|   **Setup**   |   **Hold**    |
+|---------------|---------------|
+| <p align="center"><img width="307" alt="Setup" src="https://github.com/user-attachments/assets/487827a8-ba63-4572-8721-bc5c66419789" /></p> | <p align="center"><img width="305" alt="Hold" src="https://github.com/user-attachments/assets/069edf29-8ff3-4973-8365-34826fec60a4" /></p> |
+
+
 
 ```
 #Synthesizes the RTL into a gate-level netlist based on the target library
 compile_ultra
 ```
+<div align="center">
 <img width="536" alt="17" src="https://github.com/user-attachments/assets/f2a8f156-37d6-47a6-99fb-a4385a8844eb" />
+</div>
 
 ```
 ###### Generate reports #######
@@ -253,21 +274,22 @@ report_timing  > ./reports/timing.rpt
 write -format verilog -hierarchy -output ${RESULTS_DIR}/${DCRM_FINAL_VERILOG_OUTPUT_FILE}
 write_sdc ./${RESULTS_DIR}/${DCRM_FINAL_SDC_OUTPUT_FILE}
 ```
-
-
-# Floorplan
+# [Logical Equivalence Checking](#logical-equivalence-checking)
+# [Physical Design](#physical-design)
+# [Floorplan](#floorplan)
 
 ```
 start_gui
 set PDK_PATH /data/pdk/pdk32nm/SAED32_EDK/
-create_lib -ref_libs "$PDK_PATH/lib/stdcell_rvt/ndm/saed32rvt_c.ndm  ./final/lib.ndm" final8bit
-read_verilog {./../DC/results/eight_bit_full_adder.mapped.v} -library final8bit -design eight_bit_full_adder -top eight_bit_full_adder
+create_lib -ref_libs "$PDK_PATH/lib/stdcell_rvt/ndm/saed32rvt_c.ndm  ./final/lib.ndm" final
+read_verilog {./../DC/results/eight_bit_full_adder.mapped.v} -library final -design eight_bit_full_adder -top eight_bit_full_adder
 link_block
 ```
 <img width="947" alt="19" src="https://github.com/user-attachments/assets/a66aa38e-4c76-4fb1-91dc-0223020b1948" />
 
+<div align="center">
 <img width="336" alt="20" src="https://github.com/user-attachments/assets/d6652641-1e0e-4033-9e7e-97c6260c4cd9" />
-
+</div>
 
 ```
 current_design
@@ -286,36 +308,40 @@ check_design -checks {dp_pre_floorplan}
 ​​​check_design -checks dp_pre_budgeting
 ​​check_design -checks dp_floorplan_rules
 
-initialize_floorplan -core_offset 3 -side_ration {45 45} 
+initialize_floorplan -core_offset 3 -side_length {45 60}
 ```
-
-<img width="283" alt="1" src="https://github.com/user-attachments/assets/4bf87a7c-86b8-4f62-a754-774dcde3ce6d" />
+<div align="center">
+<img width="401" alt="4 1" src="https://github.com/user-attachments/assets/a344bb43-b0ad-4932-be63-8a0b6d8648dd" />
+</div>
 
 ```
-set_individual_pin_constraints -sides 2  -ports [get_ports "Clock C_in"] -pin_spacing 5
-place_pins -ports {Clock C_in}
-set_individual_pin_constraints -sides 1  -ports [remove_from_collection [all_inputs] "Clock C_in"] -pin_spacing 5
-place_pins -ports [all_inputs]
-set_individual_pin_constraints -sides {3} -ports [all_outputs] -pin_spacing 5
-place_pins -ports [all_outputs]
-
 set_attribute -objects [get_cells u1] -name origin -value {8 8}
 set_attribute -objects [get_cells u2] -name origin -value {8 32}
 set_attribute -objects [get_cells "u1 u2"] -name physical_status -value placed
 ```
-<img width="271" alt="2" src="https://github.com/user-attachments/assets/8cd4222a-946a-4764-82c2-ccfe280cb967" />
+| <p align="center"><img width="254" alt="4" src="https://github.com/user-attachments/assets/5a344f07-4ebb-4a6e-b76b-899bbba26faf" /></p> | <p align="center"><img width="488" alt="5" src="https://github.com/user-attachments/assets/0aa0837e-4858-41fe-aa14-51004aa41500" /></p> |
+|:--:|:--:|
+
+```
+place_pins -self
+```
+<div align="center">
+<img width="254" alt="6" src="https://github.com/user-attachments/assets/3d30f799-f3f2-4a78-a1fc-e0e27cf5fb53" />
+</div>
 
 ```
 create_keepout_margin u1 -outer {1 1 1 1} -type hard
 create_keepout_margin u2 -outer {1 1 1 1} -type hard
 ```
-<img width="271" alt="4" src="https://github.com/user-attachments/assets/aa299b18-8f89-4238-b286-2264855dfe8a" />
+
+| <p align="center"><img width="259" alt="7" src="https://github.com/user-attachments/assets/d6e01b69-1d54-48e2-a556-a9972a304146" /></p> | <p align="center"><img width="282" alt="8" src="https://github.com/user-attachments/assets/83aedae4-6ab2-406f-8629-e04d10efe271" /></p> |
+|:--:|:--:|
 
 ```
 check_pin_placement
 check_legality
 ```
-# Powerplan
+# [Powerplan](#powerplan)
 
 ```
 remove_pg_strategies -all
@@ -324,7 +350,6 @@ remove_pg_regions -all
 remove_pg_via_master_rules -all
 remove_pg_strategy_via_rules -all
 remove_routes -net_types {power ground} -ring -stripe -lib_cell_pin_connect
-
 
 create_port -direction in VDD
 create_port -direction in VSS
@@ -339,39 +364,53 @@ create_pg_region pg_0 -block u1
 create_pg_region pg_1 -block u2
 create_pg_region C1 -core -exclude_regions "pg_0 pg_1"
 ```
-<img width="278" alt="6" src="https://github.com/user-attachments/assets/cf1bb4d7-7a97-4f33-81cc-0bc338c99b23" />
+<div align="center">
+<img width="260" alt="9" src="https://github.com/user-attachments/assets/ec9fa7dc-71c1-4338-b6b1-94e7272bf4c3" />
+</div>
 
 ```
-create_shape -shape_type rect -layer M7 -boundary {{0.000 12.499} {1.988 12.928}} -port VDD
-create_shape -shape_type rect -layer M7 -boundary {{0.000 14.112} {0.992 14.535}} -port VSS
+create_shape -shape_type rect -layer M7 -boundary {{0.000 13.091} {2.766 13.427}} -port VDD
+create_shape -shape_type rect -layer M7 -boundary {{0.000 12.558} {1.679 12.874}} -port VSS
+```
+| <p align="center"><img width="260" alt="10" src="https://github.com/user-attachments/assets/ae77e2a0-d536-45a3-8805-0598ebee6cda" /></p> | <p align="center"><img width="230" alt="11" src="https://github.com/user-attachments/assets/b7af3c19-861f-400b-bce4-73fbfb379557" /></p> |
+|:--:|:--:|
 
-create_pg_ring_pattern core_ring_pattern -horizontal_layer M9 -horizontal_width 0.5 -horizontal_spacing 0.5 -vertical_layer M8 -vertical_width 0.5 -vertical_spacing 0.5
-set_pg_strategy core_power_ring -core -pattern {{name:core_ring_pattern} {nets:{VDD VSS}} {offset: {1 1}}}
+```
+create_pg_ring_pattern core_ring_pattern -horizontal_layer M9 -horizontal_width 0.7 -horizontal_spacing 0.4 -vertical_layer M8 -vertical_width 0.6 -vertical_spacing 0.4
+set_pg_strategy core_power_ring -core -pattern {{name:core_ring_pattern} {nets:{VDD VSS}} {offset: {0.45 0.45}}}
 compile_pg -strategies core_power_ring
 ```
-<img width="283" alt="7" src="https://github.com/user-attachments/assets/01206662-4fee-4649-8a43-c0f56968fc92" />
+| <p align="center"><img width="257" alt="12" src="https://github.com/user-attachments/assets/25e50cc8-8848-49bf-8346-01fa671f5366" /></p> | <p align="center"><img width="416" alt="13" src="https://github.com/user-attachments/assets/f902a5b0-219b-48a4-83f3-d5585a3042ef" /></p> |
+|:--:|:--:|
 
 ```
-create_pg_mesh_pattern mesh -layers {{{vertical_layer: M6} {width: 0.5} {spacing: interleaving} {pitch: 2} {offset: 1}} {{horizontal_layer: M7} {width: 0.5} {spacing: interleaving} {pitch: 2} {offset: 1}}}
-set_pg_strategy core_mesh  -pg_regions C1 -pattern { {pattern:mesh} {nets: VDD VSS}} -extension {{{side: 234} {direction: T B R}{stop: innermost_ring}}}
+create_pg_mesh_pattern mesh -layers {{{vertical_layer: M6} {width: 0.34} {spacing: interleaving} {pitch: 1.3} {offset: 0.45}} {{horizontal_layer: M7} {width: 0.38} {spacing: interleaving} {pitch: 1} {offset: 0.45}}}
+set_pg_strategy core_mesh -pattern {{name:mesh} {nets:VDD VSS}} -pg_regions C1 -extension {{{side: 234} {direction: T R B}{stop: innermost_ring}}}
 compile_pg -strategies core_mesh
 ```
-<img width="268" alt="8 1" src="https://github.com/user-attachments/assets/4d5b0ed7-1c43-43f8-860a-43ab0f604953" />
+<div align="center">
+<img width="256" alt="14" src="https://github.com/user-attachments/assets/13e0c200-dd0e-4483-aaf3-4e599a2046e7" />
+</div>
 
 ```
-create_pg_std_cell_conn_pattern std_cell_rail -layers M1 -rail_width 0.19
+create_pg_std_cell_conn_pattern std_cell_rail -layers M1 -rail_width 0.5
 set_pg_strategy rail_strategy -pg_regions C1 -pattern {{name: std_cell_rail} {nets: VDD VSS}}
 compile_pg -strategies rail_strategy
 ```
-<img width="274" alt="8" src="https://github.com/user-attachments/assets/af10687f-b4d2-412e-98b8-3cd65037df8a" />
+<div align="center">
+<img width="259" alt="15" src="https://github.com/user-attachments/assets/a3ea8b1a-33bb-4675-bba8-2607dea39c9d" />
+</div>
 
 ```
 check_pg_drc
 check_pg_missing_vias
 check_pg_connectivity
 ```
+| <p align="center"><img width="304" alt="17" src="https://github.com/user-attachments/assets/d4dfade8-a4db-48b3-998c-f5626e560e46" /></p> | <p align="center"><img width="444" alt="18" src="https://github.com/user-attachments/assets/ec5ab85f-6fb6-4f57-ae46-6ba40828a88a" /></p> | <p align="center"><img width="416" alt="16" src="https://github.com/user-attachments/assets/e425451a-133f-409d-b1eb-21993c747f8a" /></p> |
+|:--:|:--:|:--:|
 
-# placement
+
+# [placement](#placement)
 
 ```
 set PDK_PATH /data/pdk/pdk32nm/SAED32_EDK/
@@ -405,14 +444,18 @@ place_opt
 
 <img width="473" alt="15" src="https://github.com/user-attachments/assets/ea77e37a-557b-4ffb-86cd-26e194fddb76" />
 
-# Clock Tree Synthesis
+# [Clock Tree Synthesis](#clock-tree-synthesis)
 
 ```
-check_design -checks pre_clock_tree_stage
-set_clock_routing_rules -default_rule -clocks Clock
-
+check_hier_design -stage pre_placement 
+set_clock_routing_rules -clocks Clock -min_routing_layer M3 -max_routing_layer M4 -default_rule
 synthesize_clock_trees
+```
+<div align="center">
+<img width="257" alt="23" src="https://github.com/user-attachments/assets/27c38e10-0cda-4062-8c6b-26afe1b6b15d" />
+</div>
 
+```
 balanced the skew set app options
 set_app_options -name cts.compile.enable_local_skew -value true
 set_app_options -name cts.optimize.enable_local_skew -value true
@@ -421,11 +464,12 @@ set_app_options -name cts.compile.enable_global_route -value true
 set_clock_tree_options -target_latency 0.3 -target_skew 0.02 -corner $corner1/slow
 get_corners
 clock_opt
-
 ```
-<img width="265" alt="9" src="https://github.com/user-attachments/assets/c18c7823-8f87-4ac9-a400-ad3b97ce5a97" />
+<div align="center">
+<img width="260" alt="24" src="https://github.com/user-attachments/assets/9e712906-dfbc-42c3-bb0d-f5c9fd9b3dcd" />
+</div>
 
-# Routing
+# [Routing](#routing)
 
 ```
 check_design -checks pre_route_stage
@@ -445,10 +489,18 @@ set_app_options -block [current_block] -name route.detail.diode_libcell_names -v
 
 route_global
 route_track
+```
+<div align="center">
+<img width="226" alt="27" src="https://github.com/user-attachments/assets/c8030063-44f4-4718-a8e1-e4707be1ee40" />
+</div>
+
+```
 route_detail
 route_opt
 ```
-<img width="265" alt="10" src="https://github.com/user-attachments/assets/900b2a22-41a7-464e-8289-ac78fa7f6b5a" />
+<div align="center">
+<img width="260" alt="24" src="https://github.com/user-attachments/assets/3c52a640-68f3-44a0-9506-6398d77d081b" />
+</div>
 
 ```
 write_verilog ./data/eight_full_adder_routed_netlist.v
@@ -463,16 +515,11 @@ check_routes
 check_routability
 report_design -all
 ```
-<img width="269" alt="25" src="https://github.com/user-attachments/assets/6b4b208c-9c54-4cb2-bbd2-0dd6e58ab4b3" />
-<img width="287" alt="13" src="https://github.com/user-attachments/assets/73e2e9ef-b458-4c39-94a6-99e7821e10b3" />
-<img width="473" alt="14" src="https://github.com/user-attachments/assets/eb2518f5-494b-4940-9d62-80e127b15d82" />
 
 
-#frame view
 
-<img width="959" alt="26" src="https://github.com/user-attachments/assets/ca9c095a-a26a-4fd1-9dbb-baf3087f282e" />
 
-<img width="167" alt="27" src="https://github.com/user-attachments/assets/a9f2eaa4-6c98-4756-8976-3b788d2f3015" />
+
 
 
 

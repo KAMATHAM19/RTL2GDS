@@ -1,4 +1,4 @@
-# [RTL](#rtl)
+## [RTL](#rtl)
 
 ```verilog
 `include "full_adder.v"
@@ -43,7 +43,7 @@ assign C_out = cout2;
 endmodule
 ```
 
-# [Simulation](#simulation)
+## [Simulation](#simulation)
 
 ```verilog
 `include "adder.v"
@@ -124,15 +124,15 @@ vcs -sverilog adder_tb.v -full64 -lca -kdb -debug_accesss+all
 <img width="959" alt="6" src="https://github.com/user-attachments/assets/462dba68-bf28-4729-aff2-3b9b7d45a8c7" />
 </div>
 
-# [Verification](#verification)
+## [Verification](#verification)
 
-# [Linting](#linting)
+## [Linting](#linting)
 
 <div align="center">
 <img width="959" alt="8" src="https://github.com/user-attachments/assets/bff73d0b-a0b3-4c10-b14b-b5bf4f87cdad" />
 </div>
 
-# [Generation of .lib of 4bit Full Adder](#generation-of-lib-of-4bit-full-adder)
+## [Generation of .lib of 4bit Full Adder](#generation-of-lib-of-4bit-full-adder)
 
 ```
 pt_shell
@@ -147,7 +147,7 @@ extract_model -output final_full_adder -format lib
 ```
 <img width="766" alt="9" src="https://github.com/user-attachments/assets/deee8fd2-2be3-44be-bf34-36fb76fb5f6d" />
 
-# [Generation of .db of 4bit Full Adder](#generation-of-db-of-4bit-full-adder)
+## [Generation of .db of 4bit Full Adder](#generation-of-db-of-4bit-full-adder)
 
 ```
 lc_shell
@@ -160,7 +160,7 @@ write_lib final_full_adder -output final_full_adder.db -format db
 <img width="958" alt="10" src="https://github.com/user-attachments/assets/d1471411-2f4c-4b19-bc07-24fb85ad593f" />
 </div>
 
-# [Synthesis](#synthesis)
+## [Synthesis](#synthesis)
 
 ```
 1. common_setup.tcl
@@ -274,9 +274,9 @@ report_timing  > ./reports/timing.rpt
 write -format verilog -hierarchy -output ${RESULTS_DIR}/${DCRM_FINAL_VERILOG_OUTPUT_FILE}
 write_sdc ./${RESULTS_DIR}/${DCRM_FINAL_SDC_OUTPUT_FILE}
 ```
-# [Logical Equivalence Checking](#logical-equivalence-checking)
-# [Physical Design](#physical-design)
-# [Floorplan](#floorplan)
+## [Logical Equivalence Checking](#logical-equivalence-checking)
+## [Physical Design](#physical-design)
+### [Floorplan](#floorplan)
 
 ```
 start_gui
@@ -341,7 +341,7 @@ create_keepout_margin u2 -outer {1 1 1 1} -type hard
 check_pin_placement
 check_legality
 ```
-# [Powerplan](#powerplan)
+### [Powerplan](#powerplan)
 
 ```
 remove_pg_strategies -all
@@ -410,7 +410,7 @@ check_pg_connectivity
 |:--:|:--:|:--:|
 
 
-# [placement](#placement)
+### [placement](#placement)
 
 ```
 set PDK_PATH /data/pdk/pdk32nm/SAED32_EDK/
@@ -444,7 +444,7 @@ place_opt
 
 <img width="473" alt="15" src="https://github.com/user-attachments/assets/ea77e37a-557b-4ffb-86cd-26e194fddb76" />
 
-# [Clock Tree Synthesis](#clock-tree-synthesis)
+### [Clock Tree Synthesis](#clock-tree-synthesis)
 
 ```
 check_hier_design -stage pre_placement 
@@ -469,7 +469,7 @@ clock_opt
 <img width="260" alt="24" src="https://github.com/user-attachments/assets/9e712906-dfbc-42c3-bb0d-f5c9fd9b3dcd" />
 </div>
 
-# [Routing](#routing)
+### [Routing](#routing)
 
 ```
 check_design -checks pre_route_stage

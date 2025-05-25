@@ -331,7 +331,7 @@ Verdi -cov -covdir simv.vdb
 <img width="950" alt="4" src="https://github.com/user-attachments/assets/c7b2a71b-5657-4905-9da5-b4702cbad332" />
 <br><br>
 
-## [SV Methodology](#sv-methodology)
+## [System Verilog Methodology](#system-verilog-methodology)
 
 <div align="center">
 <img width="524" alt="30" src="https://github.com/user-attachments/assets/280126e5-fead-43eb-b3a8-279d2d26525c" />
@@ -597,7 +597,7 @@ testbench.sv, 58 :     #100 $finish;
 
 
 
-# [Linting](#linting)
+# [Linting using Spyglass](#linting-using-spyglass)
 
 **`Linting`** is the process of analyzing HDL code to detect potential errors, coding standard violations, and design issues early in the development cycle.
 
@@ -615,8 +615,6 @@ testbench.sv, 58 :     #100 $finish;
 <div align="center">
   <img width="336" alt="6" src="https://github.com/user-attachments/assets/1d150771-8c4e-4d98-b21c-7404919d87e5" />
 </div>
-<br><br>
-
 
 ## Benefits:
 
@@ -654,11 +652,11 @@ run_goal
 <img width="959" alt="7" src="https://github.com/user-attachments/assets/98b7d293-138d-4895-a7fb-667a3d5ed8ba" />
 <br><br>
 
-# [Logic Synthesis](#logic-synthesis)
+# [Logic Synthesis using Design Compiler](#logic-synthesis-using-design-compiler)
 
  `Logic synthesis` is the process of translating RTL code into an **`optimised gate-level netlist`** using a specific technology or logic library.
     
-## [Inputs](#logic-synthesis-inputs)
+## [Inputs](#inputs)
 
 <div align="center">
 <pre>
@@ -676,7 +674,7 @@ run_goal
 </div>
 
     
-## [Process](#logic-synthesis-process)
+## [Process](#process)
 
 1. **Create the RTL files**  
    Write the Verilog or SystemVerilog code for your design.
@@ -702,7 +700,7 @@ run_goal
 8. **Save the design database**  
    Write out the mapped netlist and final design state for further use.
 
-## [Scripts](#logic-synthesis-scripts)
+## [Scripts](#scripts)
 
 This section provides a detailed synthesis flow using Synopsys tools with SAED 32nm PDK.
 
@@ -930,7 +928,7 @@ report_timing  > ./reports/timing.rpt
 write -format verilog -hierarchy -output ${RESULTS_DIR}/${DCRM_FINAL_VERILOG_OUTPUT_FILE}
 write_sdc ./${RESULTS_DIR}/${DCRM_FINAL_SDC_OUTPUT_FILE}
 ```
-## [Optimizations](#logic-synthesis-optimizations)
+## [Optimizations](#optimizations)
 
 During synthesis, Design Compiler performs various optimizations to improve performance, area, and power:
 
@@ -944,7 +942,7 @@ During synthesis, Design Compiler performs various optimizations to improve perf
 - **Resource Sharing**
   - Reusing hardware resources (e.g., adders, multipliers) to save area
 
-## [Outputs](#logic-synthesis-outputs)
+## [Outputs](#outputs)
 
 <div align="center">
 <pre>
@@ -958,7 +956,7 @@ During synthesis, Design Compiler performs various optimizations to improve perf
 </pre>
 </div>
 
-## [Checks](#logic-synthesis-checks)
+## [Checks](#checks)
 
 To ensure correctness and meet design goals, several checks are carried out:
 
@@ -983,7 +981,7 @@ To ensure correctness and meet design goals, several checks are carried out:
    - `check_timing`: Validates timing constraints are correctly defined and met
 
 
-# [Logical Equivalence Checking](#logical-equivalence-checking)
+# [Logical Equivalence Checking using Synopsys Formality](#logical-equivalence-checking-using-synopsys-formality)
 
 ## What is Equivalence Checking?
 
@@ -1125,7 +1123,7 @@ verify
 ### Goal:
 To create a chip layout that works correctly, uses power efficiently, and is ready for manufacturing.
 
-## 1. [Import Design / Netlist](#import-design--netlist)
+## 1. [Import Design](#import-design)
 
 The first step in the physical design flow involves loading all necessary files into the tool and performing initial checks to ensure everything is correctly set up.
 

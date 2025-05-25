@@ -53,7 +53,6 @@ endmodule
 
 ```
 
-
 # [Simulation using VCS and Verdi](#simulation-using-vcs-and-verdi)
 
 - VCS - Functional Verification Compiler Suite tool
@@ -121,7 +120,6 @@ vcs -sverilog full_adder.v full_adder_tb.sv -full64 -lca -kdb -debug_access+all
 <br><br>
 
 To run the design
-
 
 ```
 ./simv
@@ -1239,7 +1237,7 @@ Core Area = Standard Cell Area / Core Utilization
 For a square floorplan, use:
 
 ```tcl
-initialize_floorplan -core_utilization 0.65 -side_ratio {19.95 19.95} -core_offset {3}
+initialize_floorplan -side_length {20 20} -core_offset {3}
 ```
 <p align="center">
   <img width="409" alt="2" src="https://github.com/user-attachments/assets/e67f9fae-5b1e-4fa9-b639-dc3194f107a1" />
@@ -1250,15 +1248,15 @@ initialize_floorplan -core_utilization 0.65 -side_ratio {19.95 19.95} -core_offs
 Ports Placement 
 ```
 # Pin Constraints
-set_individual_pin_constraints -sides 1  -ports [remove_from_collection [all_inputs] "Clock"] -allowed_layers M3 -pin_spacing_distance 2.5
+set_individual_pin_constraints -side {1} -ports [remove_from_collection [all_inputs] "Clock"] -pin_spacing 3 -allowed_layers {M2 M3}
 place_pins -ports [remove_from_collection [all_inputs] "Clock"]
-set_individual_pin_constraints -allowed_layers M4 -ports [get_ports "Clock"] -location {11.318 0.000}
+set_individual_pin_constraints -ports [get_ports "Clock"] -location {11.318 0.000} -allowed_layers {M2 M3}
 place_pins -ports {Clock}
-set_individual_pin_constraints -sides {3} -allowed_layers M3 -ports [all_outputs] -pin_spacing 3
-place_pins -ports [all_outputs]
+set_individual_pin_constraints -sides {2} -ports [all_outputs] -pin_spacing 5 -allowed_layers {M2 M3}
+place_pins -ports [all_outputs] 
 ```
 <p align="center">
-<img width="343" alt="1" src="https://github.com/user-attachments/assets/4f24c228-d123-49c7-8a97-bbcb53714a63" />
+<img width="344" alt="1" src="https://github.com/user-attachments/assets/81f100f3-b815-45f5-8b2d-11cf75fd8238" />
 </p>
 
 ### [Floorplan Optimizations](#floorplan-optimizations)
@@ -1308,7 +1306,7 @@ After completing the floorplan stage, several essential checks are performed to 
 | `check_power_domains`      | Validates correctness of MV (multi-voltage) power domain definitions.   |
 | `check_mv_design`          | Checks isolation, level shifters, and power intent consistency.         |
 | `report floorplan`         | Gives detailed info on block shape, area, margins, and pin access.      |
-| `report clocke domains`     | Ensures clock-related partitions are defined and reachable.             |
+| `report clock domains`     | Ensures clock-related partitions are defined and reachable.             |
 | Visual inspection (GUI)    | Manual review of macro placement, congestion hotspots, and pin access.  |
 
 
@@ -1383,17 +1381,16 @@ create_net -ground VSS
 connect_pg_net -pg -design full_adder -automatic -all_blocks
 ```
 <div align="center">
-  <img src="https://github.com/user-attachments/assets/a911941b-0205-43e4-806f-7187e9efb0a5" width="413" alt="4" style="display: inline-block; margin-right: 10px;" />
-  <img src="https://github.com/user-attachments/assets/d4e44fb7-608c-4e3e-a244-fc9a58848637" width="196" alt="3" style="display: inline-block;" />
+<img width="624" alt="3" src="https://github.com/user-attachments/assets/9db9d541-3258-4c85-862d-d3c40f1d23be" />
 </div>
-
 
 ```
 create_shape -shape_type rect -layer M7 -boundary {{0.000 6.784} {2.629 7.125}} -port VDD
-create_shape -shape_type rect -layer M7 -boundary {{0.000 7.258} {1.631 7.600}} -port VSS
+create_shape -shape_type rect -layer M7 -boundary {{0.000 6.227} {1.621 6.564}} -port VSS
 ```
 <div align="center">
-<img width="412" alt="3 1" src="https://github.com/user-attachments/assets/d88abafb-c779-4e64-9f64-783f35c46af2" />
+  <img width="341" alt="4" src="https://github.com/user-attachments/assets/0d148fba-bfb7-4970-8212-aa10146644f7" width="413" alt="4" style="display: inline-block; margin-right: 10px;" />
+  <img width="188" alt="5" src="https://github.com/user-attachments/assets/d5008a4d-372b-4245-9281-b1cdeef8c386" width="196" alt="3" style="display: inline-block;" />
 </div>
 
 ```
@@ -1403,8 +1400,8 @@ set_pg_strategy core_power_ring -core -pattern {{name:core_ring_pattern} {nets:{
 compile_pg -strategies core_power_ring
 ```
 <p align="center">
-  <img width="337" alt="5" src="https://github.com/user-attachments/assets/6492c6a2-b90a-4e8d-a507-29ca6acb8f6c" />
-  <img width="181" alt="6" src="https://github.com/user-attachments/assets/d83655b4-2a7a-41fe-995c-5ea13db4d488" />
+ <img width="335" alt="8" src="https://github.com/user-attachments/assets/76b47328-e980-4938-b27d-177e0f3bb16f" />
+  <img width="169" alt="7" src="https://github.com/user-attachments/assets/4bbcfd64-d2b7-4491-9c27-c8906f90ca37" />
 </p>
 
 
@@ -1415,17 +1412,17 @@ set_pg_strategy core_mesh -pattern {{name:mesh} {nets:VDD VSS}} -core -extension
 compile_pg -strategies core_mesh
 ```
 <div align="center">
-<img width="339" alt="7" src="https://github.com/user-attachments/assets/f0b0e4db-52db-4460-adf7-bb671229f2d7" />
+<img width="338" alt="9" src="https://github.com/user-attachments/assets/097fddc6-c305-4bb7-b922-a1328a639a45" />
 </div>
 
 ```
 # Standard cell rail connection
-create_pg_std_cell_conn_pattern std_cell_rail -layers M1 -rail_width 0.5
+create_pg_std_cell_conn_pattern std_cell_rail -layers M1 -rail_width 0.3
 set_pg_strategy rail_strategy -core -pattern {{name: std_cell_rail} {nets: VDD VSS}}
 compile_pg -strategies rail_strategy
 ```
 <div align="center">
-<img width="344" alt="8" src="https://github.com/user-attachments/assets/cb356edb-d5d4-4d6f-bfe5-40f39981d034" />
+<img width="338" alt="9 1" src="https://github.com/user-attachments/assets/cf7a649a-e7f4-4a1f-9f60-c36763ae33a7" />
 </div>
 
 ```
@@ -1603,37 +1600,8 @@ report_timing -delay_type min
 | <img width="452" alt="12" src="https://github.com/user-attachments/assets/f748a6ca-6a8e-41e8-a610-f4b13233fa32" /> | <img width="452" alt="13" src="https://github.com/user-attachments/assets/951e6c4b-36e8-41d1-a973-500d2b3d2421" />| <br><br>
 
 <div align="center">
-<img width="910" alt="51" src="https://github.com/user-attachments/assets/74c614c3-bfe8-4464-9800-422f07ce23a0" />
+<img width="928" alt="31" src="https://github.com/user-attachments/assets/61f56e78-cd1f-4cc5-b7d8-7c72d01a50ea" />
 </div> 
-
-```
-#best_case analysis
-set mode1 "func"
-set corner2 "fast"
-set scenario2 "${mode2}_${corner2}"
-
-create_mode $mode1
-create_corner $corner2
-create_scenario -name $scenario2 -mode $mode1 -corner $corner2
-
-set parasitic2 "p2"
-set tluplus_file$parasitic2 "$PDK_PATH/tech/star_rcxt/saed32nm_1p9m_Cmin.tluplus"
-set layer_map_file$parasitic2 "$PDK_PATH/tech/star_rcxt/saed32nm_tf_itf_tluplus.map"
-
-read_parasitic_tech -tlup $tluplus_filep2 -layermap $layer_map_filep2 -name p2
-set_parasitic_parameters -late_spec $parasitic2 -early_spec $parasitic2
-
-source $Constraints
-
-set_scenario_status func_slow -hold false -setup true -leakage_power true -dynamic_power true -max_capacitance true -min_capacitance false -max_transition true -active true
-set_scenario_status func_fast -hold true -setup false -leakage_power true -dynamic_power true -max_capacitance true -min_capacitance false -max_transition true -active true
-report_scenarios
-report_timing -scenarios func_slow
-report_timing -scenarios func_slow -delay_type min
-report_timing -scenarios func_fast
-report_timing -scenarios func_fast -delay_type min
-```
-<img width="781" alt="14" src="https://github.com/user-attachments/assets/32e27d62-e562-4e9f-9737-c05167ea8d04" />
 
 ```
 # Perform placement
@@ -1641,16 +1609,16 @@ place_opt
 legalize_placement
 ```
 <div align="center">
-<img width="338" alt="15" src="https://github.com/user-attachments/assets/0d8dd119-e718-4a13-a048-79ae3f2ba421" />
-</div> <br> <br>
+<img width="343" alt="11" src="https://github.com/user-attachments/assets/d965df84-9a5c-4d53-81b3-ad36c8ffcdbe" />
+</div> 
 
 <table align="center">
   <tr>
     <td align="center" style="padding: 10px;">
-      <img width="667" alt="26 2" src="https://github.com/user-attachments/assets/254d2169-ba87-4fdf-8f70-596c24263ed4" />
+      <img width="670" alt="13" src="https://github.com/user-attachments/assets/2aaaf587-eea7-43ac-8a14-2f4a368959e7" />
     </td>
     <td align="center" style="padding: 10px;">
-      <img width="501" alt="26" src="https://github.com/user-attachments/assets/1828a104-8106-48f8-b615-b61c5fa8a237" />
+      <img width="656" alt="12" src="https://github.com/user-attachments/assets/b2e975bc-6fc3-42a2-a550-84faff516d12" />
     </td>
   </tr>
 </table>
@@ -1708,10 +1676,10 @@ check_legality
   </thead>
   <tr>
     <td align="center" style="padding: 10px;">
-      <img width="344" alt="27 - Cell Density" src="https://github.com/user-attachments/assets/135d3214-b59d-4b0e-b2ed-c3475d6e5f1a" />
+     <img width="739" alt="18-cel" src="https://github.com/user-attachments/assets/786b91e6-670b-4855-93d2-5feca368bea9" />
     </td>
     <td align="center" style="padding: 10px;">
-      <img width="341" alt="28 - Pin Density" src="https://github.com/user-attachments/assets/ed9403de-656f-482b-b7ca-da90e09dfa3e" />
+      <img width="740" alt="16 -pin" src="https://github.com/user-attachments/assets/4f7e279f-de31-48f4-bb47-274ff103045b" />
     </td>
   </tr>
 </table>
@@ -1803,12 +1771,14 @@ check_legality
 
 ```tcl
 check_design -checks pre_clock_tree_stage
-set_clock_routing_rules -default_rule  -min_routing_layer M4 -max_routing_layer M5  
+set_clock_routing_rules -clocks Clock -min_routing_layer M3 -max_routing_layer M4 -default_rule
 synthesize_clock_trees
 ```
-<div align="center">
-<img width="337" alt="16" src="https://github.com/user-attachments/assets/77b10794-376f-4a69-8f32-5a301449d44d" />
+<div align="center" style="display: flex; justify-content: center; gap: 10px;">
+  <img width="338" alt="22" src="https://github.com/user-attachments/assets/b64848cb-6944-4b50-952f-41bfcb805c77" />
+  <img width="346" alt="23 1" src="https://github.com/user-attachments/assets/139f3a2a-ea84-47e5-938a-419e72bdd439" />
 </div>
+
 
 <h3 align="center">PRE-CTS</h3>
 
@@ -1818,12 +1788,19 @@ synthesize_clock_trees
       <img width="101" alt="17" src="https://github.com/user-attachments/assets/99018b12-16b6-44fb-80e5-a5905f091b46" />
     </td>
     <td align="center" style="padding: 10px;">
-      <img width="385" alt="18" src="https://github.com/user-attachments/assets/cd1b2e78-91a9-4a7f-86cd-9941f00e2f8f" />
+      <img width="341" alt="23" src="https://github.com/user-attachments/assets/45765ec2-78f9-4671-ae56-6979b411093a" />
     </td>
   </tr>
 </table>
 
+```
+report_timing
+report_timing -delay_type min
+```
 
+| Pre-Setup       | Pre-Hold       |
+|-----------------|----------------|
+| <img width="447" alt="14 - after placement" src="https://github.com/user-attachments/assets/32dd1990-fa3c-415a-8772-677d0d7da45b" /> | <img width="442" alt="15 -after" src="https://github.com/user-attachments/assets/fb03168a-6012-4ac6-b9d6-fdb09648848b" />| <br><br>
 ```
 # Enable local skew optimization
 set_app_options -name cts.compile.enable_local_skew -value true
@@ -1837,10 +1814,10 @@ set_clock_tree_options -target_latency 0.3 -target_skew 0.02 -corner $corner1
 # Run clock optimisation
 clock_opt
 ```
-<div align="center">
-<img width="337" alt="19" src="https://github.com/user-attachments/assets/4d803bfe-1e38-4171-9d53-e88ea6cd5ae8" />
-</div> 
-
+<div align="center" style="display: flex; justify-content: center; gap: 10px;">
+  <img width="341" alt="26" src="https://github.com/user-attachments/assets/61649a2c-3317-4e3a-9f8f-2b3cfa54c3cc" />
+  <img width="338" alt="27" src="https://github.com/user-attachments/assets/82b53699-a25c-47a6-b1be-7501694d3979" />
+</div>
 
 <h3 align="center">POST-CTS</h3>
 
@@ -1850,10 +1827,14 @@ clock_opt
       <img width="415" alt="20" src="https://github.com/user-attachments/assets/1c79ea8c-a399-45fb-af1a-485f92c148f8" />
     </td>
     <td align="center" style="padding: 10px;">
-      <img width="614" alt="21" src="https://github.com/user-attachments/assets/bd8ef027-6e61-4494-ab73-26ad9d46e6a1" />
+      <img width="608" alt="28" src="https://github.com/user-attachments/assets/f7dc4cd4-bcd4-4024-acc9-858e6cb596e8" />
     </td>
   </tr>
 </table>
+
+| Post-Setup      | Post-Hold      |
+|-----------------|----------------|
+| <img width="446" alt="24-setup after cts" src="https://github.com/user-attachments/assets/33bca9c0-68b7-499a-9c88-f134dbb402a8" /> | <img width="442" alt="25-hold after cts" src="https://github.com/user-attachments/assets/93d88c5d-770c-4164-83d9-b162009102bd" /> | <br><br>
 
 ### [CTS Optimizations](#cts-optimizations)
 
@@ -1883,9 +1864,9 @@ clock_opt
 
 ### [Checks](#checks) 
 
-| **Check Command**                 | **Purpose**                                                   |
+| **Check Command**                | **Purpose**                                                    |
 |----------------------------------|----------------------------------------------------------------|
-| `report_clock_tree`              | Shows clock buffers, sinks, fanout levels, and structure.      |
+| `report clock tree`              | Shows clock buffers, sinks, fanout levels, and structure.      |
 | `report_timing`                  | Verifies setup and hold timing after clock tree insertion.     |
 | `report_clock_skew`              | Confirms clock skew is within the allowed range.               |
 | `report_clock_latency`           | Measures delay from clock source to clock sinks.               |
@@ -1954,14 +1935,27 @@ set_app_options -block [current_block] -name route.detail.diode_libcell_names -v
 
 # Routing commands
 route_global
+```
+<div align="center">
+<img width="338" alt="27" src="https://github.com/user-attachments/assets/799e1a26-3f4e-4d14-bcc3-e91712b03b85" />
+</div>
+
+```
 route_track
 ```
+<div align="center">
 <img width="665" alt="22" src="https://github.com/user-attachments/assets/30e5d904-9236-43fc-9c3d-3b6edd1bd450" />
+</div>
 
 ```
 route_detail
 route_opt
+```
+<div align="center">
+<img width="340" alt="34" src="https://github.com/user-attachments/assets/c47d21bb-7aa5-4d98-ae44-ccf957fddd19" />
+</div>
 
+```
 # Reports and Exports
 report_timing
 report_design -all
@@ -1970,14 +1964,14 @@ check_routes
 check_routability
 
 # Export final files
-write_verilog ./data/eight_bit_full_adder_routed_netlist.v
-write_parasitics -format spef -output ./data/eight_bit_full_adder_func_slow.spef
-write_gds -design eight_bit_full_adder ./data/eight_bit_full_adder.gds
-write_def -design eight_bit_full_adder ./data/eight_bit_full_adder_routing.def
-create_frame ./data/eight_bit_full_adder.frame
-write_lef -design eight_bit_full_adder ./data/eight_bit_full_adder.lef
-
+write_verilog ./data/full_adder_routed_netlist.v
+write_parasitics -format spef -output ./data/full_adder_func_slow.spef
+write_gds -design full_adder ./data/full_adder.gds
+write_def -design full_adder ./data/full_adder_routing.def
+create_frame ./data/full_adder.frame
+write_lef -design full_adder ./data/full_adder.lef
 ```
+
 ### [**Routing Optimizations**](#routing-optimizations)
 
 - **Reduce Coupling Capacitance:**  

@@ -1,3 +1,27 @@
+# Contents
+
+## [Flat Design](#flat-design)
+
+1. [Register Transfer Level (RTL)](#register-transfer-level-rtl)  
+2. [Simulation using VCS and Verdi](#simulation-using-vcs-and-verdi)  
+   - [Testbench](#testbench)  
+3. [Verification](#verification)  
+   - [Coverage Analysis](#coverage-analysis)  
+   - [System Verilog Methodology](#system-verilog-methodology)  
+4. [Linting using Spyglass](#linting-using-spyglass)  
+5. [Logic Synthesis using Design Compiler](#logic-synthesis-using-design-compiler)  
+6. [Logical Equivalence Checking using Synopsys Formality](#logical-equivalence-checking-using-synopsys-formality)  
+7. [Physical Design](#physical-design)  
+   - **[Import Design](#import-design)**  
+   - **[Floorplan](#floorplan)**  
+   - **[Powerplan](#powerplan)**  
+   - **[Placement](#placement)**  
+   - **[Clock Tree Synthesis (CTS)](#clock-tree-synthesis-cts)**  
+   - **[Routing](#routing)**  
+
+ 
+
+
 # [Register Transfer Level (RTL)](#register-transfer-level-rtl)
 
 ## Register Transfer Level (RTL)
@@ -1123,7 +1147,7 @@ verify
 ### Goal:
 To create a chip layout that works correctly, uses power efficiently, and is ready for manufacturing.
 
-## 1. [Import Design](#import-design)
+# [Import Design](#import-design)
 
 The first step in the physical design flow involves loading all necessary files into the tool and performing initial checks to ensure everything is correctly set up.
 
